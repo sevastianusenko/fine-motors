@@ -1,4 +1,11 @@
-import { Phone, MapPin, Clock, Mail, Star, Car, ShieldCheck, Users, ArrowRight } from "lucide-react";
+"use client";
+
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import {
+  Phone, MapPin, Clock, Mail, Star, Car, ShieldCheck,
+  Users, ArrowRight, CheckCircle,
+} from "lucide-react";
 import Link from "next/link";
 
 const BUSINESS = {
@@ -17,32 +24,35 @@ const BUSINESS = {
   phoneHref: "+17176445444",
   email: "Finemotorsautosales@gmail.com",
   hours: [
-    { day: "Mon - Fri", time: "9:00 AM - 5:00 PM" },
-    { day: "Saturday", time: "9:00 AM - 3:00 PM" },
+    { day: "Mon – Fri", time: "9:00 AM – 5:00 PM" },
+    { day: "Saturday", time: "9:00 AM – 3:00 PM" },
     { day: "Sunday", time: "Closed" },
   ],
   googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Fine+Motors+LLC+Newmanstown+PA",
 };
 
 const FEATURED_VEHICLES = [
-  { id: 1, year: 2021, make: "Toyota", model: "RAV4 XLE AWD", price: 24995, miles: 32450 },
-  { id: 2, year: 2020, make: "Honda", model: "CR-V EX-L", price: 22500, miles: 41200 },
-  { id: 3, year: 2019, make: "Ford", model: "F-150 XLT 4WD", price: 28900, miles: 58300 },
+  { id: 1, year: 2021, make: "Toyota", model: "RAV4 XLE AWD",   price: 24995, miles: 32450, badge: "Best Value" },
+  { id: 2, year: 2020, make: "Honda",  model: "CR-V EX-L",       price: 22500, miles: 41200, badge: "Popular" },
+  { id: 3, year: 2019, make: "Ford",   model: "F-150 XLT 4WD",   price: 28900, miles: 58300, badge: null },
 ];
 
 const REVIEWS = [
   {
     name: "Michael R.",
+    initial: "M",
     rating: 5,
     text: "Great experience from start to finish. No pressure, fair pricing, and the car was exactly as described. Highly recommend.",
   },
   {
     name: "Sarah K.",
+    initial: "S",
     rating: 5,
     text: "Family-run dealership with real integrity. They went above and beyond to make sure I was happy with my purchase.",
   },
   {
     name: "James P.",
+    initial: "J",
     rating: 5,
     text: "Honest, straightforward, and friendly. I'll definitely come back when it's time for our next vehicle.",
   },
@@ -60,28 +70,62 @@ function formatMiles(miles: number) {
   return new Intl.NumberFormat("en-US").format(miles) + " mi";
 }
 
+function FadeUp({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 36 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-line">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-semibold tracking-tight text-brand">
-              Fine Motors
-            </span>
-            <span className="text-xs uppercase tracking-widest text-ink-muted hidden sm:inline">
-              LLC
-            </span>
+    <div className="min-h-screen bg-white font-sans">
+
+      {/* ── HEADER ───────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#0B1F3A] flex items-center justify-center shrink-0">
+              <Car className="w-4 h-4 text-[#F59E0B]" />
+            </div>
+            <div className="leading-none">
+              <span className="text-[#0B1F3A] font-bold text-[17px] tracking-tight block">Fine Motors</span>
+              <span className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold block mt-0.5">LLC</span>
+            </div>
           </Link>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-ink-soft">
-            <Link href="#inventory" className="hover:text-brand transition">Inventory</Link>
-            <Link href="#about" className="hover:text-brand transition">About</Link>
-            <Link href="#reviews" className="hover:text-brand transition">Reviews</Link>
-            <Link href="#contact" className="hover:text-brand transition">Contact</Link>
+
+          <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
+            {["Inventory", "About", "Reviews", "Contact"].map((item) => (
+              <Link
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-slate-500 hover:text-[#0B1F3A] transition-colors"
+              >
+                {item}
+              </Link>
+            ))}
           </nav>
+
           <a
             href={`tel:${BUSINESS.phoneHref}`}
-            className="hidden sm:flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-brand-hover transition"
+            className="hidden sm:inline-flex items-center gap-2 bg-[#0B1F3A] hover:bg-[#162E50] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors"
           >
             <Phone className="w-4 h-4" />
             {BUSINESS.phone}
@@ -89,219 +133,372 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section className="max-w-6xl mx-auto px-6 pt-20 pb-24 text-center">
-        <div className="inline-flex items-center gap-2 bg-brand-light text-brand px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase mb-6">
-          <Star className="w-3.5 h-3.5 fill-current" />
-          {BUSINESS.rating.toFixed(1)} on Google · {BUSINESS.reviewCount}+ Reviews
-        </div>
-        <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-ink leading-[1.05] max-w-3xl mx-auto">
-          {BUSINESS.tagline}
-        </h1>
-        <p className="mt-6 text-lg text-ink-soft max-w-xl mx-auto leading-relaxed">
-          Family-owned dealership in Newmanstown, PA. Honest pricing, quality vehicles,
-          and {BUSINESS.yearsInBusiness} years of trusted service.
-        </p>
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Link
-            href="#inventory"
-            className="inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-md font-medium hover:bg-brand-hover transition w-full sm:w-auto justify-center"
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <section className="relative bg-[#0B1F3A] overflow-hidden">
+        {/* dot grid */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        {/* radial glow */}
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-[#F59E0B]/10 blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-6xl mx-auto px-6 py-28 md:py-40">
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            Browse Inventory
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            href="#contact"
-            className="inline-flex items-center gap-2 border border-line text-ink px-6 py-3 rounded-md font-medium hover:bg-surface transition w-full sm:w-auto justify-center"
-          >
-            Visit Us
-          </Link>
+            {/* rating badge */}
+            <div className="inline-flex items-center gap-2 bg-[#F59E0B]/10 border border-[#F59E0B]/25 text-[#FCD34D] px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-10">
+              <Star className="w-3.5 h-3.5 fill-current" />
+              {BUSINESS.rating.toFixed(1)} Google Rating · {BUSINESS.reviewCount}+ Reviews
+            </div>
+
+            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-extrabold text-white leading-[1.0] tracking-tight max-w-xl">
+              Quality<br />
+              <span className="text-[#F59E0B]">Vehicles.</span><br />
+              Honest Prices.
+            </h1>
+
+            <p className="mt-8 text-slate-400 text-lg md:text-xl max-w-md leading-relaxed">
+              Family-owned dealership in Newmanstown, PA.{" "}
+              {BUSINESS.yearsInBusiness}&nbsp;years of trusted service to Lebanon County.
+            </p>
+
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link
+                href="#inventory"
+                className="inline-flex items-center gap-2 bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1F3A] font-extrabold px-7 py-3.5 rounded-xl text-sm transition-colors shadow-lg shadow-amber-500/20"
+              >
+                Browse Inventory
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="#contact"
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold px-7 py-3.5 rounded-xl text-sm transition-colors"
+              >
+                Visit Us
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      <section className="border-y border-line bg-surface">
-        <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div>
-            <div className="text-2xl font-bold text-brand">{BUSINESS.yearsInBusiness}+</div>
-            <div className="text-xs text-ink-muted uppercase tracking-wider mt-1">Years Local</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-brand">{BUSINESS.rating.toFixed(1)}★</div>
-            <div className="text-xs text-ink-muted uppercase tracking-wider mt-1">Google Rating</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-brand">{BUSINESS.reviewCount}+</div>
-            <div className="text-xs text-ink-muted uppercase tracking-wider mt-1">Reviews</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-brand">100%</div>
-            <div className="text-xs text-ink-muted uppercase tracking-wider mt-1">Family-Owned</div>
-          </div>
-        </div>
-      </section>
-
-      <section id="inventory" className="max-w-6xl mx-auto px-6 py-24">
-        <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-accent font-semibold mb-2">Inventory</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-ink">Featured Vehicles</h2>
-          </div>
-          <Link href="#" className="text-sm font-medium text-brand hover:underline inline-flex items-center gap-1">
-            View all <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {FEATURED_VEHICLES.map((v) => (
-            <article
-              key={v.id}
-              className="border border-line rounded-lg overflow-hidden hover:shadow-lg transition group cursor-pointer"
-            >
-              <div className="aspect-[4/3] bg-surface flex items-center justify-center text-ink-muted">
-                <Car className="w-16 h-16 opacity-30" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-ink leading-tight">
-                  {v.year} {v.make} {v.model}
-                </h3>
-                <p className="text-sm text-ink-muted mt-1">{formatMiles(v.miles)}</p>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-xl font-bold text-brand">{formatPrice(v.price)}</span>
-                  <span className="text-sm font-medium text-accent group-hover:underline inline-flex items-center gap-1">
-                    Details <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="about" className="bg-surface border-y border-line">
-        <div className="max-w-6xl mx-auto px-6 py-24">
-          <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-widest text-accent font-semibold mb-2">Why Fine Motors</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-ink">A different kind of dealership</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* ── STATS BAR ────────────────────────────────────────────── */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              {
-                icon: ShieldCheck,
-                title: "Honest Pricing",
-                text: "No hidden fees, no last-minute surprises. The price you see is the price you pay.",
-              },
-              {
-                icon: Car,
-                title: "Quality Vehicles",
-                text: "Every car is hand-picked and inspected. We only sell what we'd drive ourselves.",
-              },
-              {
-                icon: Users,
-                title: "Local & Trusted",
-                text: `Family-owned and operated in Newmanstown, PA for over ${BUSINESS.yearsInBusiness} years.`,
-              },
-            ].map((item) => (
-              <div key={item.title} className="text-center">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-brand-light text-brand mb-5">
-                  <item.icon className="w-7 h-7" />
+              { value: `${BUSINESS.yearsInBusiness}+`, label: "Years Local" },
+              { value: `${BUSINESS.rating.toFixed(1)}★`, label: "Google Rating" },
+              { value: `${BUSINESS.reviewCount}+`,      label: "Happy Customers" },
+              { value: "100%",                           label: "Family-Owned" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 + 0.2, duration: 0.5, ease: "easeOut" }}
+              >
+                <div className="text-3xl font-extrabold text-[#0B1F3A]">{stat.value}</div>
+                <div className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold mt-1.5">
+                  {stat.label}
                 </div>
-                <h3 className="text-lg font-semibold text-ink mb-2">{item.title}</h3>
-                <p className="text-ink-soft leading-relaxed">{item.text}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="reviews" className="max-w-6xl mx-auto px-6 py-24">
-        <div className="text-center mb-16">
-          <p className="text-xs uppercase tracking-widest text-accent font-semibold mb-2">Customer Reviews</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-ink">What our customers say</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {REVIEWS.map((r, i) => (
-            <div key={i} className="border border-line rounded-lg p-6 bg-white">
-              <div className="flex gap-0.5 mb-4">
-                {Array.from({ length: r.rating }).map((_, idx) => (
-                  <Star key={idx} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-              <p className="text-ink-soft leading-relaxed mb-5">&ldquo;{r.text}&rdquo;</p>
-              <p className="text-sm font-semibold text-ink">{r.name}</p>
+      {/* ── INVENTORY ────────────────────────────────────────────── */}
+      <section id="inventory" className="max-w-6xl mx-auto px-6 py-24">
+        <FadeUp>
+          <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
+            <div>
+              <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-2">Inventory</p>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#0B1F3A] tracking-tight">Featured Vehicles</h2>
             </div>
+            <Link href="#" className="text-sm font-bold text-[#0B1F3A] hover:text-[#F59E0B] transition-colors inline-flex items-center gap-1.5">
+              View all <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </FadeUp>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {FEATURED_VEHICLES.map((v, i) => (
+            <motion.article
+              key={v.id}
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ delay: i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -5, transition: { duration: 0.25 } }}
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:shadow-slate-200/70 transition-shadow cursor-pointer group"
+            >
+              {/* image placeholder */}
+              <div className="aspect-[16/9] bg-gradient-to-br from-[#0B1F3A] to-[#193860] flex items-center justify-center relative overflow-hidden">
+                <Car className="w-24 h-24 text-white/10" />
+                {/* shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent" />
+                {v.badge && (
+                  <span className="absolute top-3 left-3 bg-[#F59E0B] text-[#0B1F3A] text-[11px] font-extrabold px-3 py-1 rounded-lg">
+                    {v.badge}
+                  </span>
+                )}
+              </div>
+
+              <div className="p-5">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="font-extrabold text-[#0B1F3A] text-lg leading-tight">
+                      {v.year} {v.make}
+                    </h3>
+                    <p className="text-slate-500 text-sm font-medium mt-0.5">{v.model}</p>
+                  </div>
+                  <span className="text-xl font-extrabold text-[#0B1F3A] whitespace-nowrap">
+                    {formatPrice(v.price)}
+                  </span>
+                </div>
+
+                <p className="mt-3 text-slate-400 text-sm">{formatMiles(v.miles)}</p>
+
+                <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-sm font-bold text-[#0B1F3A] group-hover:text-[#F59E0B] transition-colors inline-flex items-center gap-1.5">
+                    View Details <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                  <span className="text-[11px] text-slate-400 uppercase tracking-wide font-semibold">Pre-owned</span>
+                </div>
+              </div>
+            </motion.article>
           ))}
         </div>
       </section>
 
-      <section id="contact" className="bg-brand text-white">
-        <div className="max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-blue-200 font-semibold mb-3">Visit Us</p>
-            <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-6">
-              Stop by the lot —<br />we&apos;d love to meet you
+      {/* ── ABOUT ────────────────────────────────────────────────── */}
+      <section id="about" className="bg-[#0B1F3A]">
+        <div className="max-w-6xl mx-auto px-6 py-24">
+          <FadeUp className="text-center mb-16">
+            <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-3">Why Fine Motors</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+              A different kind of dealership
             </h2>
-            <p className="text-blue-100 leading-relaxed mb-8">
-              Located right off Stiegel Pike. Take a look around, ask questions, take a test drive.
-              No pressure, ever.
+            <p className="mt-4 text-slate-400 max-w-xl mx-auto leading-relaxed">
+              No tricks, no pressure — just honest service from a family that&apos;s been here for {BUSINESS.yearsInBusiness} years.
             </p>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-blue-200" />
-                <div>
-                  <div className="font-medium">{BUSINESS.address.street}</div>
-                  <div className="text-blue-100 text-sm">
-                    {BUSINESS.address.city}, {BUSINESS.address.state} {BUSINESS.address.zip}
-                  </div>
+          </FadeUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                icon: ShieldCheck,
+                title: "Honest Pricing",
+                text: "No hidden fees, no last-minute surprises. The price you see is the price you pay.",
+                accent: "#10B981",
+              },
+              {
+                icon: Car,
+                title: "Quality Vehicles",
+                text: "Every car is hand-picked and inspected. We only sell what we'd drive ourselves.",
+                accent: "#F59E0B",
+              },
+              {
+                icon: Users,
+                title: "Local & Trusted",
+                text: `Family-owned and operated in Newmanstown, PA for over ${BUSINESS.yearsInBusiness} years.`,
+                accent: "#818CF8",
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: i * 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/8 transition-colors"
+              >
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                  style={{ backgroundColor: `${item.accent}20` }}
+                >
+                  <item.icon className="w-6 h-6" style={{ color: item.accent }} />
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 flex-shrink-0 text-blue-200" />
-                <a href={`tel:${BUSINESS.phoneHref}`} className="hover:underline">
-                  {BUSINESS.phone}
-                </a>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 flex-shrink-0 text-blue-200" />
-                <a href={`mailto:${BUSINESS.email}`} className="hover:underline break-all">
-                  {BUSINESS.email}
-                </a>
-              </div>
-            </div>
-            <a
-              href={BUSINESS.googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-8 bg-white text-brand px-5 py-2.5 rounded-md text-sm font-medium hover:bg-blue-50 transition"
-            >
-              Get Directions <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-widest text-blue-200 font-semibold mb-3">Hours</p>
-            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <Clock className="w-5 h-5" /> When we&apos;re open
-            </h3>
-            <div className="space-y-3 border-t border-white/15">
-              {BUSINESS.hours.map((h) => (
-                <div key={h.day} className="flex justify-between border-b border-white/15 py-3">
-                  <span className="font-medium">{h.day}</span>
-                  <span className="text-blue-100">{h.time}</span>
-                </div>
-              ))}
-            </div>
+                <h3 className="text-xl font-extrabold text-white mb-3">{item.title}</h3>
+                <p className="text-slate-400 leading-relaxed">{item.text}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      <footer className="bg-ink text-blue-100/80 text-sm">
-        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            © {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.
+      {/* ── REVIEWS ──────────────────────────────────────────────── */}
+      <section id="reviews" className="max-w-6xl mx-auto px-6 py-24">
+        <FadeUp className="text-center mb-16">
+          <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-3">Customer Reviews</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-[#0B1F3A] tracking-tight">
+            What our customers say
+          </h2>
+          <div className="flex items-center justify-center gap-1 mt-5">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-5 h-5 fill-[#F59E0B] text-[#F59E0B]" />
+            ))}
+            <span className="ml-2 text-slate-500 text-sm font-medium">5.0 on Google</span>
           </div>
-          <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition">Terms</Link>
+        </FadeUp>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {REVIEWS.map((r, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ delay: i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col"
+            >
+              <div className="flex gap-1 mb-4">
+                {[...Array(r.rating)].map((_, idx) => (
+                  <Star key={idx} className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
+                ))}
+              </div>
+              <p className="text-slate-600 leading-relaxed text-[15px] flex-1">
+                &ldquo;{r.text}&rdquo;
+              </p>
+              <div className="flex items-center gap-3 mt-6 pt-5 border-t border-slate-200">
+                <div className="w-9 h-9 rounded-full bg-[#0B1F3A] text-white flex items-center justify-center text-sm font-extrabold shrink-0">
+                  {r.initial}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[#0B1F3A]">{r.name}</p>
+                  <p className="text-xs text-slate-400">Google Review</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── CONTACT ──────────────────────────────────────────────── */}
+      <section id="contact" className="bg-slate-50 border-t border-slate-200">
+        <div className="max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 md:grid-cols-2 gap-16">
+          <FadeUp>
+            <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-3">Visit Us</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-[#0B1F3A] leading-tight mb-6 tracking-tight">
+              Stop by the lot —<br />we&apos;d love to meet you
+            </h2>
+            <p className="text-slate-500 leading-relaxed mb-8">
+              Located right off Stiegel Pike. Take a look around, ask questions, take a test drive.
+              No pressure, ever.
+            </p>
+
+            <div className="space-y-4">
+              {[
+                {
+                  icon: MapPin,
+                  label: `${BUSINESS.address.street}, ${BUSINESS.address.city}, ${BUSINESS.address.state} ${BUSINESS.address.zip}`,
+                  href: BUSINESS.googleMapsUrl,
+                  external: true,
+                },
+                {
+                  icon: Phone,
+                  label: BUSINESS.phone,
+                  href: `tel:${BUSINESS.phoneHref}`,
+                  external: false,
+                },
+                {
+                  icon: Mail,
+                  label: BUSINESS.email,
+                  href: `mailto:${BUSINESS.email}`,
+                  external: false,
+                },
+              ].map((item, i) => (
+                <a
+                  key={i}
+                  href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
+                  className="flex items-center gap-4 group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#0B1F3A] flex items-center justify-center shrink-0">
+                    <item.icon className="w-4.5 h-4.5 text-[#F59E0B]" />
+                  </div>
+                  <span className="text-slate-600 group-hover:text-[#0B1F3A] transition-colors text-sm font-medium break-all">
+                    {item.label}
+                  </span>
+                </a>
+              ))}
+            </div>
+
+            <a
+              href={BUSINESS.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-8 bg-[#0B1F3A] hover:bg-[#162E50] text-white px-6 py-3 rounded-xl text-sm font-bold transition-colors"
+            >
+              Get Directions <ArrowRight className="w-4 h-4" />
+            </a>
+          </FadeUp>
+
+          <FadeUp delay={0.1}>
+            <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-3">Hours</p>
+            <h3 className="text-xl font-extrabold text-[#0B1F3A] mb-6 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-[#F59E0B]" />
+              When we&apos;re open
+            </h3>
+
+            <div className="divide-y divide-slate-200">
+              {BUSINESS.hours.map((h) => (
+                <div key={h.day} className="flex justify-between py-4">
+                  <span className="font-semibold text-[#0B1F3A]">{h.day}</span>
+                  <span className={`text-sm font-medium ${h.time === "Closed" ? "text-rose-400" : "text-slate-500"}`}>
+                    {h.time}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA card */}
+            <div className="mt-8 bg-[#0B1F3A] rounded-2xl p-6 text-white">
+              <div className="flex items-center gap-2 mb-3">
+                <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
+                <span className="font-extrabold text-[15px]">Ready to find your next car?</span>
+              </div>
+              <p className="text-slate-400 text-sm leading-relaxed mb-5">
+                Call us or stop by — we&apos;ll find the right vehicle for your needs and budget.
+              </p>
+              <a
+                href={`tel:${BUSINESS.phoneHref}`}
+                className="inline-flex items-center gap-2 bg-[#F59E0B] text-[#0B1F3A] px-5 py-2.5 rounded-xl text-sm font-extrabold hover:bg-[#D97706] transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                {BUSINESS.phone}
+              </a>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ── FOOTER ───────────────────────────────────────────────── */}
+      <footer className="bg-[#071528]">
+        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-[#0B1F3A] border border-white/10 flex items-center justify-center">
+              <Car className="w-3.5 h-3.5 text-[#F59E0B]" />
+            </div>
+            <span className="text-slate-500 text-sm">
+              © {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.
+            </span>
+          </div>
+          <div className="flex gap-6 text-sm text-slate-600">
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms"   className="hover:text-white transition-colors">Terms</Link>
           </div>
         </div>
       </footer>
-    </main>
+
+    </div>
   );
 }
