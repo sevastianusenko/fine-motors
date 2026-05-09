@@ -214,6 +214,36 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
           {/* LEFT: specs + info */}
           <div className="lg:col-span-2 space-y-8">
 
+            {/* Photo gallery in content (always visible) */}
+            {photos.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Photos</h2>
+                  <button onClick={() => setLightbox(0)}
+                    className="flex items-center gap-1.5 text-xs font-bold text-orange-500 hover:text-orange-600 transition-colors">
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    View full screen
+                  </button>
+                </div>
+                <div className={`grid gap-2 ${photos.length === 1 ? "grid-cols-1" : photos.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                  {photos.slice(0, 6).map((url, i) => (
+                    <button key={i} onClick={() => setLightbox(i)}
+                      className={`relative overflow-hidden rounded-xl bg-gray-900 group ${i === 0 && photos.length > 1 ? "col-span-2 row-span-2" : ""}`}
+                      style={{ aspectRatio: i === 0 && photos.length > 1 ? "16/9" : "4/3" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={`${url}?w=600&q=80`} alt={`Photo ${i + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                      {i === 5 && photos.length > 6 && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <span className="text-white font-bold text-lg">+{photos.length - 6}</span>
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Key specs grid */}
             <div>
               <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Vehicle Specs</h2>
@@ -251,6 +281,31 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
                   <p className="text-gray-700 leading-relaxed">{vehicle.description}</p>
                 </div>
+              </div>
+            )}
+
+            {/* Accident history + VIN */}
+            {(vehicle.accidents || vehicle.vin) && (
+              <div className="flex flex-wrap gap-3">
+                {vehicle.accidents && (
+                  <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold ${
+                    vehicle.accidents === "none"
+                      ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                      : "bg-amber-50 border-amber-200 text-amber-700"
+                  }`}>
+                    <CheckCircle className="w-4 h-4" />
+                    {vehicle.accidents === "none"     && "No accidents reported"}
+                    {vehicle.accidents === "one"      && "1 accident reported"}
+                    {vehicle.accidents === "multiple" && "Multiple accidents reported"}
+                    {vehicle.accidents === "unknown"  && "Accident history unknown"}
+                  </div>
+                )}
+                {vehicle.vin && (
+                  <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-600">
+                    <span className="font-bold text-gray-400 text-xs uppercase">VIN</span>
+                    <span className="font-mono">{vehicle.vin}</span>
+                  </div>
+                )}
               </div>
             )}
 
