@@ -1,4 +1,5 @@
 import { defineType, defineField } from "sanity";
+import { VinDecoderInput } from "../components/VinDecoderInput";
 
 export const vehicleType = defineType({
   name:  "vehicle",
@@ -6,6 +7,15 @@ export const vehicleType = defineType({
   type:  "document",
 
   fields: [
+    // ── VIN DECODER (top of form) ────────────────────────────────────
+    defineField({
+      name:        "vin",
+      title:       "VIN — Enter to Auto-Fill All Fields",
+      type:        "string",
+      description: "Enter the 17-character VIN and click 'Decode' to automatically fill Make, Model, Year, Fuel, Drivetrain, and more.",
+      components:  { input: VinDecoderInput },
+    }),
+
     // ── STATUS ──────────────────────────────────────────────────────
     defineField({
       name:        "status",
@@ -188,14 +198,6 @@ export const vehicleType = defineType({
         layout: "radio",
       },
       initialValue: "none",
-    }),
-
-    // ── VIN ──────────────────────────────────────────────────────────
-    defineField({
-      name:        "vin",
-      title:       "VIN (optional)",
-      type:        "string",
-      description: "Vehicle Identification Number — 17 characters",
     }),
 
     // ── EXTRA PHOTOS ─────────────────────────────────────────────────
