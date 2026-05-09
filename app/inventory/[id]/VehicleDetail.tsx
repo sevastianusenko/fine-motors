@@ -7,6 +7,7 @@ import {
   Car, Phone, MapPin, ChevronLeft, CheckCircle,
   Gauge, Calendar, LayoutGrid, Star, Shield,
   ChevronLeft as Prev, ChevronRight as Next, Mail,
+  Fuel, Zap, Settings2, Palette, X as Close, Maximize2,
 } from "lucide-react";
 
 const PHONE     = "(717) 644-5444";
@@ -25,18 +26,59 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
   ].filter(Boolean);
 
   const [activeIdx, setActiveIdx] = useState(0);
+  const [lightbox, setLightbox]   = useState<number | null>(null);
 
   function prev() { setActiveIdx(i => (i - 1 + photos.length) % photos.length); }
   function next() { setActiveIdx(i => (i + 1) % photos.length); }
+  function lbPrev() { setLightbox(i => i === null ? null : (i - 1 + photos.length) % photos.length); }
+  function lbNext() { setLightbox(i => i === null ? null : (i + 1) % photos.length); }
 
   const specs = [
-    { icon: Calendar,    label: "Year",      value: String(vehicle.year)              },
-    { icon: Gauge,       label: "Mileage",   value: fmt(vehicle.miles) + " mi"        },
-    { icon: LayoutGrid,  label: "Body Type", value: vehicle.body ?? "—"               },
-    { icon: Star,        label: "Condition", value: "Pre-Owned"                        },
-  ];
+    { icon: Calendar,    label: "Year",          value: String(vehicle.year)              },
+    { icon: Gauge,       label: "Mileage",        value: fmt(vehicle.miles) + " mi"        },
+    { icon: LayoutGrid,  label: "Body Type",      value: vehicle.body ?? "—"               },
+    { icon: Fuel,        label: "Fuel",           value: vehicle.fuel ?? "Gas"             },
+    { icon: Settings2,   label: "Drivetrain",     value: vehicle.drivetrain ?? "—"         },
+    { icon: Zap,         label: "Transmission",   value: vehicle.transmission ?? "—"       },
+    ...(vehicle.engine        ? [{ icon: Star,    label: "Engine",  value: vehicle.engine }] : []),
+    ...(vehicle.exteriorColor ? [{ icon: Palette, label: "Exterior",value: vehicle.exteriorColor }] : []),
+    ...(vehicle.interiorColor ? [{ icon: Palette, label: "Interior",value: vehicle.interiorColor }] : []),
+  ].filter(s => s.value && s.value !== "—");
 
   return (
+    <>
+    {/* ── LIGHTBOX ─────────────────────────────────────────────── */}
+    {lightbox !== null && (
+      <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+        onClick={() => setLightbox(null)}>
+        <button onClick={() => setLightbox(null)}
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10">
+          <Close className="w-5 h-5" />
+        </button>
+        {photos.length > 1 && <>
+          <button onClick={e => { e.stopPropagation(); lbPrev(); }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10">
+            <Prev className="w-6 h-6" />
+          </button>
+          <button onClick={e => { e.stopPropagation(); lbNext(); }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10">
+            <Next className="w-6 h-6" />
+          </button>
+        </>}
+        <motion.img key={lightbox}
+          initial={{ opacity:0, scale:0.95 }} animate={{ opacity:1, scale:1 }}
+          transition={{ duration:0.25, ease:[0.22,1,0.36,1] }}
+          src={`${photos[lightbox]}?w=1800&q=90`}
+          alt={`Photo ${lightbox + 1}`}
+          className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg"
+          onClick={e => e.stopPropagation()}
+        />
+        <div className="absolute bottom-4 text-white/40 text-sm">
+          {lightbox + 1} / {photos.length}
+        </div>
+      </div>
+    )}
+
     <div className="min-h-dvh bg-white font-sans antialiased">
 
       {/* ── NAV ────────────────────────────────────────────────── */}
@@ -87,6 +129,15 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
           <span className="absolute top-5 left-5 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-sm font-bold">
             {vehicle.badge}
           </span>
+        )}
+
+        {/* View all photos button */}
+        {photos.length > 0 && (
+          <button onClick={() => setLightbox(activeIdx)}
+            className="absolute bottom-5 right-5 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm text-white text-xs font-semibold hover:bg-black/70 transition-colors z-10">
+            <Maximize2 className="w-3.5 h-3.5" />
+            {photos.length > 1 ? `All ${photos.length} photos` : "Full screen"}
+          </button>
         )}
 
         {/* Photo navigation */}
@@ -166,7 +217,7 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
             {/* Key specs grid */}
             <div>
               <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Vehicle Specs</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {specs.map(s => (
                   <div key={s.label} className="bg-gray-50 rounded-2xl p-5 text-center border border-gray-100">
                     <s.icon className="w-5 h-5 text-orange-400 mx-auto mb-2" />
@@ -381,5 +432,6 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
         </div>
       </footer>
     </div>
+    </>
   );
 }

@@ -17,7 +17,9 @@
       "Bash(node -e ' *)",
       "Bash(git commit -m 'Add vehicle detail page, make cards clickable *)",
       "Bash(git commit -m 'Redesign vehicle detail page: hero gallery, sticky sidebar, specs *)",
-      "Bash(git commit -m 'Add more cars section on detail page, fix image query *)"
+      "Bash(git commit -m 'Add more cars section on detail page, fix image query *)",
+      "Bash(npx sanity@latest login)",
+      "Bash(git commit -m 'Real Sanity inventory on home, lightbox gallery, new vehicle fields \\(fuel/drivetrain/etc\\) *)"
     ]
   }
 }

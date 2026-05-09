@@ -111,6 +111,93 @@ export const vehicleType = defineType({
       },
     }),
 
+    // ── DRIVETRAIN & FUEL ────────────────────────────────────────────
+    defineField({
+      name:  "fuel",
+      title: "Fuel Type",
+      type:  "string",
+      options: {
+        list: [
+          { title: "⛽ Gas",              value: "Gas"            },
+          { title: "🔋 Hybrid",           value: "Hybrid"         },
+          { title: "🔌 Plug-in Hybrid",   value: "Plug-in Hybrid" },
+          { title: "⚡ Electric",          value: "Electric"       },
+          { title: "🛢️ Diesel",           value: "Diesel"         },
+        ],
+        layout: "radio",
+      },
+      initialValue: "Gas",
+    }),
+    defineField({
+      name:  "drivetrain",
+      title: "Drivetrain",
+      type:  "string",
+      options: {
+        list: [
+          { title: "AWD — All-Wheel Drive",   value: "AWD" },
+          { title: "4WD — Four-Wheel Drive",  value: "4WD" },
+          { title: "FWD — Front-Wheel Drive", value: "FWD" },
+          { title: "RWD — Rear-Wheel Drive",  value: "RWD" },
+        ],
+        layout: "radio",
+      },
+    }),
+    defineField({
+      name:  "transmission",
+      title: "Transmission",
+      type:  "string",
+      options: {
+        list: ["Automatic", "Manual", "CVT"],
+        layout: "radio",
+      },
+      initialValue: "Automatic",
+    }),
+    defineField({
+      name:        "engine",
+      title:       "Engine (optional)",
+      type:        "string",
+      description: "e.g. 2.5L 4-cylinder, 3.5L V6, 2.0T Turbocharged",
+    }),
+
+    // ── COLORS ───────────────────────────────────────────────────────
+    defineField({
+      name:        "exteriorColor",
+      title:       "Exterior Color (optional)",
+      type:        "string",
+      description: "e.g. Pearl White, Midnight Black, Graphite Gray",
+    }),
+    defineField({
+      name:        "interiorColor",
+      title:       "Interior Color (optional)",
+      type:        "string",
+      description: "e.g. Black Leather, Beige Cloth",
+    }),
+
+    // ── ACCIDENT HISTORY ─────────────────────────────────────────────
+    defineField({
+      name:  "accidents",
+      title: "Accident History",
+      type:  "string",
+      options: {
+        list: [
+          { title: "✅ No accidents reported",  value: "none"     },
+          { title: "⚠️ 1 accident reported",    value: "one"      },
+          { title: "⚠️ Multiple accidents",     value: "multiple" },
+          { title: "❓ Unknown",                value: "unknown"  },
+        ],
+        layout: "radio",
+      },
+      initialValue: "none",
+    }),
+
+    // ── VIN ──────────────────────────────────────────────────────────
+    defineField({
+      name:        "vin",
+      title:       "VIN (optional)",
+      type:        "string",
+      description: "Vehicle Identification Number — 17 characters",
+    }),
+
     // ── EXTRA PHOTOS ─────────────────────────────────────────────────
     defineField({
       name:  "gallery",
@@ -133,7 +220,7 @@ export const vehicleType = defineType({
       name:        "features",
       title:       "Key Features (optional)",
       type:        "array",
-      description: 'Type a feature and press Enter. e.g. AWD, Sunroof, Backup Camera',
+      description: 'Type a feature and press Enter. e.g. Sunroof, Backup Camera, Heated Seats',
       of:          [{ type: "string" }],
       options:     { layout: "tags" },
     }),
