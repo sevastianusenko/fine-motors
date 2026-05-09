@@ -7,6 +7,7 @@ import {
   Car, Phone, ChevronLeft, ChevronRight,
   SlidersHorizontal, X, Check, ChevronDown, ArrowRight,
 } from "lucide-react";
+import { NavBar } from "@/app/components/NavBar";
 
 // ── TYPES ─────────────────────────────────────────────────────────────────
 
@@ -202,31 +203,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
   return (
     <div className="min-h-dvh bg-gray-50 font-sans antialiased">
 
-      {/* NAV */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100">
-        <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center shrink-0">
-              <Car className="w-4 h-4 text-white" />
-            </div>
-            <div className="leading-none">
-              <span className="font-bold text-[17px] tracking-tight text-gray-900 block">Fine Motors</span>
-              <span className="text-gray-400 text-[10px] uppercase tracking-widest font-semibold block mt-0.5">LLC · Newmanstown, PA</span>
-            </div>
-          </Link>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-            <Link href="/"          className="hover:text-gray-900 transition-colors">Home</Link>
-            <Link href="/inventory" className="text-orange-500 font-semibold">Inventory</Link>
-            <Link href="/why-us"    className="hover:text-gray-900 transition-colors">Why Us</Link>
-            <Link href="/contact"   className="hover:text-gray-900 transition-colors">Contact</Link>
-          </nav>
-          <a href={`tel:${PHONE_TEL}`} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-colors">
-            <Phone className="w-4 h-4" />
-            <span className="hidden sm:inline">{PHONE}</span>
-            <span className="sm:hidden">Call</span>
-          </a>
-        </div>
-      </header>
+      <NavBar />
 
       {/* PAGE TITLE */}
       <div className="bg-white border-b border-gray-100">

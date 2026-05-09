@@ -1,11 +1,12 @@
 "use client";
 
-import { motion, useInView, AnimatePresence, MotionConfig } from "framer-motion";
+import { motion, useInView, MotionConfig } from "framer-motion";
 import { useRef, useState } from "react";
 import {
   Phone, Star, Car, ShieldCheck, Users, ArrowRight,
-  CheckCircle, Menu, X, MapPin, Mail, Clock,
+  CheckCircle, MapPin, Mail, Clock,
 } from "lucide-react";
+import { NavBar } from "./components/NavBar";
 import Link from "next/link";
 
 // ── TYPES ─────────────────────────────────────────────────────────────────
@@ -89,8 +90,7 @@ function FadeUp({ children, className = "", delay = 0 }: { children: React.React
 // ── COMPONENT ─────────────────────────────────────────────────────────────
 
 export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVehicle[] }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchMake, setSearchMake] = useState("");
+  const [searchMake, setSearchMake]   = useState("");
   const [searchPrice, setSearchPrice] = useState("");
 
   return (
@@ -98,61 +98,10 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
     <div className="min-h-dvh bg-white text-gray-900 font-sans antialiased">
 
       {/* ── NAV ───────────────────────────────────────────────────── */}
-      <header className="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100">
-        <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center shrink-0">
-              <Car className="w-4 h-4 text-white" />
-            </div>
-            <div className="leading-none">
-              <span className="font-bold text-[17px] tracking-tight text-gray-900 block">Fine Motors</span>
-              <span className="text-gray-400 text-[10px] uppercase tracking-widest font-semibold block mt-0.5">LLC · Newmanstown, PA</span>
-            </div>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-            {[["Inventory","/inventory"],["Why Us","/why-us"],["Reviews","#reviews"],["Contact","/contact"]].map(([label, href]) => (
-              <Link key={label} href={href} className="hover:text-gray-900 transition-colors">{label}</Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <a href={`tel:${BUSINESS.phoneHref}`} className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors">
-              <Phone className="w-4 h-4" />{BUSINESS.phone}
-            </a>
-            <Link href="/inventory" className="px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-colors">
-              View Cars
-            </Link>
-            <button className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-              onClick={() => setMobileOpen(o => !o)} aria-label={mobileOpen ? "Close menu" : "Open menu"}>
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:"auto" }} exit={{ opacity:0, height:0 }}
-              transition={{ duration:0.22, ease:[0.22,1,0.36,1] }} className="md:hidden overflow-hidden bg-white">
-              <nav className="max-w-7xl mx-auto px-6 pb-4 flex flex-col gap-1">
-                {[["Inventory","/inventory"],["Why Us","/why-us"],["Reviews","#reviews"],["Contact","/contact"]].map(([label, href]) => (
-                  <Link key={label} href={href} onClick={() => setMobileOpen(false)}
-                    className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-3 rounded-lg text-sm font-medium transition-colors">
-                    {label}
-                  </Link>
-                ))}
-                <a href={`tel:${BUSINESS.phoneHref}`} onClick={() => setMobileOpen(false)}
-                  className="mt-2 flex items-center gap-2 bg-orange-500 text-white px-4 py-3 rounded-lg text-sm font-semibold">
-                  <Phone className="w-4 h-4" />{BUSINESS.phone}
-                </a>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
+      <NavBar />
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center pt-16 overflow-hidden bg-[#0a0e1a]">
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0e1a]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80" alt=""
           className="absolute inset-0 w-full h-full object-cover object-center opacity-50" loading="eager" />
