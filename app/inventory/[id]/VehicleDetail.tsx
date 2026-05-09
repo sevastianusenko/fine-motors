@@ -18,7 +18,7 @@ function fmt(n: number)      { return new Intl.NumberFormat("en-US").format(n); 
 function fmtPrice(n: number) { return "$" + fmt(n); }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function VehicleDetail({ vehicle }: { vehicle: any }) {
+export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any[] }) {
   const photos: string[] = [
     vehicle.img,
     ...(vehicle.gallery ?? []),
@@ -292,6 +292,77 @@ export function VehicleDetail({ vehicle }: { vehicle: any }) {
           </Link>
         </div>
       </div>
+
+      {/* ── MORE CARS ──────────────────────────────────────────── */}
+      {more.length > 0 && (
+        <section className="bg-gray-50 border-t border-gray-100">
+          <div className="mx-auto max-w-7xl px-6 py-14">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">More Cars</p>
+                <h2 className="text-2xl font-bold text-gray-900">Other Available Vehicles</h2>
+              </div>
+              <Link href="/inventory"
+                className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-orange-500 hover:text-orange-600 transition-colors">
+                View All
+                <Next className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {more.map((car, i) => (
+                <motion.div
+                  key={car._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Link href={`/inventory/${car._id}`}
+                    className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div className="relative h-40 overflow-hidden bg-gray-900">
+                      {car.img ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={`${car.img}?w=400&q=75`}
+                          alt={`${car.year} ${car.make} ${car.model}`}
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Car className="w-12 h-12 text-gray-600" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      {car.badge && (
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-orange-500 text-white text-[11px] font-bold">
+                          {car.badge}
+                        </span>
+                      )}
+                      <span className="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/50 backdrop-blur-sm text-white text-sm font-bold">
+                        ${Number(car.price).toLocaleString("en-US")}
+                      </span>
+                    </div>
+                    <div className="p-4">
+                      <p className="text-xs text-gray-400 mb-0.5">{car.year}</p>
+                      <h3 className="font-bold text-gray-900 text-sm leading-tight">{car.make} {car.model}</h3>
+                      <p className="text-xs text-gray-400 mt-1">{Number(car.miles).toLocaleString("en-US")} mi</p>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-6 text-center sm:hidden">
+              <Link href="/inventory"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:border-orange-300 hover:text-orange-600 transition-all">
+                View All Cars →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FOOTER */}
       <footer className="bg-slate-950 border-t border-white/5 py-8 mt-8">

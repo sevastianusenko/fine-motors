@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\admin\\\\Projects\\\\fine-motors\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Read(//c/Users/admin/.claude/plugins/marketplaces/ui-ux-pro-max-skill/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python scripts/search.py \"automotive car dealership local service trust\" --design-system -p \"Fine Motors\" -f markdown)",
+      "Bash(py --version)",
+      "Bash(where python *)",
+      "Bash(where py *)",
+      "PowerShell(python --version 2>&1)",
+      "PowerShell(py --version 2>&1)",
+      "PowerShell(Get-Command python3 -ErrorAction SilentlyContinue)",
+      "Bash(git push *)",
+      "Bash(git reset *)",
+      "Bash(git commit -m 'Fix build: exclude scripts from TS, handle missing Sanity projectId *)",
+      "Bash(node -e ' *)",
+      "Bash(git commit -m 'Add vehicle detail page, make cards clickable *)",
+      "Bash(git commit -m 'Redesign vehicle detail page: hero gallery, sticky sidebar, specs *)",
+      "Bash(git commit -m 'Add more cars section on detail page, fix image query *)"
+    ]
+  }
+}
