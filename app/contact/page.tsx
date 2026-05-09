@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Car, Phone, MapPin, Mail, Clock, Star,
+  Phone, MapPin, Mail, Clock, Star,
   ShieldCheck, Users, ThumbsUp, BadgeCheck,
   ArrowRight, ExternalLink,
 } from "lucide-react";
 import { NavBar } from "@/app/components/NavBar";
+import { Footer } from "@/app/components/Footer";
 
 // ── DATA ───────────────────────────────────────────────────────────────────
 
@@ -340,22 +341,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ── FOOTER ─────────────────────────────────────────────────── */}
-      <footer className="bg-slate-950 border-t border-white/5 py-8">
-        <div className="mx-auto max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/20">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-orange-500 flex items-center justify-center shrink-0">
-              <Car className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="text-white/40 font-semibold">Fine Motors LLC</span>
-          </div>
-          <span>© {new Date().getFullYear()} Fine Motors LLC. All rights reserved.</span>
-          <div className="flex gap-5">
-            <Link href="/privacy" className="hover:text-white/40 transition-colors">Privacy</Link>
-            <Link href="/terms"   className="hover:text-white/40 transition-colors">Terms</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

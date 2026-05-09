@@ -7,6 +7,7 @@ import {
   CheckCircle, MapPin, Mail, Clock,
 } from "lucide-react";
 import { NavBar } from "./components/NavBar";
+import { Footer } from "@/app/components/Footer";
 import Link from "next/link";
 
 // ── TYPES ─────────────────────────────────────────────────────────────────
@@ -132,13 +133,15 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
 
             <motion.div className="flex flex-col sm:flex-row gap-2 p-2 rounded-2xl bg-white/[0.08] backdrop-blur border border-white/10 max-w-2xl mb-10"
               initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:0.7,delay:0.3,ease:[0.22,1,0.36,1]}}>
-              <select value={searchMake} onChange={e => setSearchMake(e.target.value)}
+              <label htmlFor="search-make" className="sr-only">Filter by make</label>
+              <select id="search-make" value={searchMake} onChange={e => setSearchMake(e.target.value)}
                 className="flex-1 px-4 py-3 rounded-xl bg-white/10 text-white border-0 text-sm focus:outline-none focus:ring-1 focus:ring-orange-400/50 cursor-pointer"
                 style={{colorScheme:"dark"}}>
                 <option value="">Any Make</option>
                 {["Chevrolet","Dodge","Ford","Honda","Hyundai","Jeep","Nissan","Subaru","Toyota"].map(m=><option key={m}>{m}</option>)}
               </select>
-              <select value={searchPrice} onChange={e => setSearchPrice(e.target.value)}
+              <label htmlFor="search-price" className="sr-only">Filter by price</label>
+              <select id="search-price" value={searchPrice} onChange={e => setSearchPrice(e.target.value)}
                 className="flex-1 px-4 py-3 rounded-xl bg-white/10 text-white border-0 text-sm focus:outline-none focus:ring-1 focus:ring-orange-400/50 cursor-pointer"
                 style={{colorScheme:"dark"}}>
                 <option value="">Any Price</option>
@@ -177,7 +180,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
             {STATS.map(s => (
               <div key={s.label} className="py-8 px-6 text-center">
                 <div className="text-3xl font-bold text-gray-900 mb-1 tabular-nums">{s.value}</div>
-                <div className="text-sm text-gray-400">{s.label}</div>
+                <div className="text-sm text-gray-600">{s.label}</div>
               </div>
             ))}
           </div>
@@ -364,22 +367,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
         </div>
       </section>
 
-      {/* ── FOOTER ────────────────────────────────────────────────── */}
-      <footer className="bg-slate-950 border-t border-white/5 py-8">
-        <div className="mx-auto max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/20">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-orange-500 flex items-center justify-center shrink-0">
-              <Car className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="text-white/40 font-semibold tracking-tight">Fine Motors LLC</span>
-          </div>
-          <span>© {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.</span>
-          <div className="flex gap-5">
-            <Link href="/privacy" className="hover:text-white/40 transition-colors">Privacy Policy</Link>
-            <Link href="/terms"   className="hover:text-white/40 transition-colors">Terms</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
     </div>
     </MotionConfig>

@@ -68,7 +68,7 @@ export function NavBar() {
 
           <Link
             href="/inventory"
-            className="hidden sm:inline-flex px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-colors"
+            className="hidden sm:inline-flex px-4 py-2 rounded-lg bg-orange-600 text-white text-sm font-bold hover:bg-orange-700 transition-colors"
           >
             View Cars
           </Link>
