@@ -1,92 +1,126 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView, AnimatePresence, MotionConfig } from "framer-motion";
+import { useRef, useState } from "react";
 import {
-  Phone, MapPin, Clock, Mail, Star, Car, ShieldCheck,
-  Users, ArrowRight, CheckCircle,
+  Phone, Star, Car, ShieldCheck, Users, ArrowRight,
+  CheckCircle, Menu, X, MapPin, Mail, Clock,
 } from "lucide-react";
 import Link from "next/link";
 
 const BUSINESS = {
   name: "Fine Motors LLC",
-  tagline: "Quality Used Cars in Lebanon County",
   yearsInBusiness: 15,
   rating: 5.0,
   reviewCount: 25,
-  address: {
-    street: "3910 Stiegel Pike",
-    city: "Newmanstown",
-    state: "PA",
-    zip: "17073",
-  },
+  address: { street: "3910 Stiegel Pike", city: "Newmanstown", state: "PA", zip: "17073" },
   phone: "(717) 644-5444",
   phoneHref: "+17176445444",
   email: "Finemotorsautosales@gmail.com",
   hours: [
     { day: "Mon – Fri", time: "9:00 AM – 5:00 PM" },
-    { day: "Saturday", time: "9:00 AM – 3:00 PM" },
-    { day: "Sunday", time: "Closed" },
+    { day: "Saturday",  time: "9:00 AM – 3:00 PM" },
+    { day: "Sunday",    time: "Closed" },
   ],
   googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Fine+Motors+LLC+Newmanstown+PA",
 };
 
+const STATS = [
+  { value: `${BUSINESS.yearsInBusiness}+`, label: "Years Local" },
+  { value: `${BUSINESS.rating.toFixed(1)}★`, label: "Google Rating" },
+  { value: `${BUSINESS.reviewCount}+`,      label: "Happy Customers" },
+  { value: "$0",                             label: "Hidden Fees" },
+];
+
 const FEATURED_VEHICLES = [
-  { id: 1, year: 2021, make: "Toyota", model: "RAV4 XLE AWD",   price: 24995, miles: 32450, badge: "Best Value" },
-  { id: 2, year: 2020, make: "Honda",  model: "CR-V EX-L",       price: 22500, miles: 41200, badge: "Popular" },
-  { id: 3, year: 2019, make: "Ford",   model: "F-150 XLT 4WD",   price: 28900, miles: 58300, badge: null },
+  {
+    id: 1, year: 2021, make: "Toyota", model: "RAV4 XLE AWD",
+    mileage: "32,450", price: "24,995", badge: "Best Value",
+    img: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80",
+  },
+  {
+    id: 2, year: 2020, make: "Honda", model: "CR-V EX-L",
+    mileage: "41,200", price: "22,500", badge: "Popular",
+    img: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80",
+  },
+  {
+    id: 3, year: 2019, make: "Ford", model: "F-150 XLT 4WD",
+    mileage: "58,300", price: "28,900", badge: "Low Miles",
+    img: "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=800&q=80",
+  },
+];
+
+const FEATURES = [
+  {
+    icon: ShieldCheck,
+    title: "Honest Pricing",
+    desc: "No hidden fees, no last-minute surprises. The price you see is the price you pay.",
+  },
+  {
+    icon: Car,
+    title: "Quality Vehicles",
+    desc: "Every car is hand-picked and inspected. We only sell what we'd drive ourselves.",
+  },
+  {
+    icon: CheckCircle,
+    title: "No-Pressure Sales",
+    desc: "Take your time, ask every question. We're here to help, not to rush you.",
+  },
+  {
+    icon: Users,
+    title: "Family-Owned",
+    desc: `Operated right here in Newmanstown, PA for over ${BUSINESS.yearsInBusiness} years.`,
+  },
+];
+
+const STEPS = [
+  {
+    n: "01",
+    title: "Browse Inventory",
+    desc: "Explore our selection of hand-picked vehicles with fair, transparent pricing.",
+  },
+  {
+    n: "02",
+    title: "Schedule a Visit",
+    desc: "Give us a call or stop by the lot. We'll have the car ready and waiting.",
+  },
+  {
+    n: "03",
+    title: "Drive It Home",
+    desc: "Simple paperwork, honest deal. Most customers are on the road the same day.",
+  },
 ];
 
 const REVIEWS = [
   {
     name: "Michael R.",
-    initial: "M",
+    location: "Lebanon County, PA",
     rating: 5,
     text: "Great experience from start to finish. No pressure, fair pricing, and the car was exactly as described. Highly recommend.",
   },
   {
     name: "Sarah K.",
-    initial: "S",
+    location: "Lebanon County, PA",
     rating: 5,
     text: "Family-run dealership with real integrity. They went above and beyond to make sure I was happy with my purchase.",
   },
   {
     name: "James P.",
-    initial: "J",
+    location: "Lebanon County, PA",
     rating: 5,
     text: "Honest, straightforward, and friendly. I'll definitely come back when it's time for our next vehicle.",
   },
 ];
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(price);
-}
-
-function formatMiles(miles: number) {
-  return new Intl.NumberFormat("en-US").format(miles) + " mi";
-}
-
-function FadeUp({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}) {
+function FadeUp({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 36 }}
+      initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
@@ -95,410 +129,460 @@ function FadeUp({
 }
 
 export default function HomePage() {
-  return (
-    <div className="min-h-screen bg-white font-sans">
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchMake, setSearchMake] = useState("");
+  const [searchPrice, setSearchPrice] = useState("");
 
-      {/* ── HEADER ───────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#0B1F3A] flex items-center justify-center shrink-0">
-              <Car className="w-4 h-4 text-[#F59E0B]" />
+  return (
+    <MotionConfig reducedMotion="user">
+    <div className="min-h-dvh bg-white text-gray-900 font-sans antialiased">
+
+      {/* ── NAV ───────────────────────────────────────────────────── */}
+      <header className="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100">
+        <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center shrink-0">
+              <Car className="w-4 h-4 text-white" />
             </div>
             <div className="leading-none">
-              <span className="text-[#0B1F3A] font-bold text-[17px] tracking-tight block">Fine Motors</span>
-              <span className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold block mt-0.5">LLC</span>
+              <span className="font-bold text-[17px] tracking-tight text-gray-900 block">Fine Motors</span>
+              <span className="text-gray-400 text-[10px] uppercase tracking-widest font-semibold block mt-0.5">LLC · Newmanstown, PA</span>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
-            {["Inventory", "About", "Reviews", "Contact"].map((item) => (
-              <Link
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-slate-500 hover:text-[#0B1F3A] transition-colors"
-              >
-                {item}
-              </Link>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+            {[["Inventory","/inventory"],["Why Us","/why-us"],["Reviews","#reviews"],["Contact","/contact"]].map(([label, href]) => (
+              <Link key={label} href={href} className="hover:text-gray-900 transition-colors">{label}</Link>
             ))}
           </nav>
 
-          <a
-            href={`tel:${BUSINESS.phoneHref}`}
-            className="hidden sm:inline-flex items-center gap-2 bg-[#0B1F3A] hover:bg-[#162E50] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors"
-          >
-            <Phone className="w-4 h-4" />
-            {BUSINESS.phone}
-          </a>
+          <div className="flex items-center gap-3">
+            <a href={`tel:${BUSINESS.phoneHref}`} className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors">
+              <Phone className="w-4 h-4" />{BUSINESS.phone}
+            </a>
+            <Link href="/inventory" className="px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-colors">
+              View Cars
+            </Link>
+            <button
+              className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              onClick={() => setMobileOpen((o) => !o)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
+
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="md:hidden overflow-hidden bg-white"
+            >
+              <nav className="max-w-7xl mx-auto px-6 pb-4 flex flex-col gap-1">
+                {[["Inventory","/inventory"],["Why Us","/why-us"],["Reviews","#reviews"],["Contact","/contact"]].map(([label, href]) => (
+                  <Link
+                    key={label} href={href}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-3 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    {label}
+                  </Link>
+                ))}
+                <a
+                  href={`tel:${BUSINESS.phoneHref}`}
+                  onClick={() => setMobileOpen(false)}
+                  className="mt-2 flex items-center gap-2 bg-orange-500 text-white px-4 py-3 rounded-lg text-sm font-semibold"
+                >
+                  <Phone className="w-4 h-4" />{BUSINESS.phone}
+                </a>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
-      {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative bg-[#0B1F3A] overflow-hidden">
-        {/* dot grid */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
+      {/* ── HERO ──────────────────────────────────────────────────── */}
+      <section className="relative min-h-screen flex items-center pt-16 overflow-hidden bg-[#0a0e1a]">
+
+        {/* Background photo */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-50"
+          loading="eager"
         />
-        {/* radial glow */}
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-[#F59E0B]/10 blur-3xl pointer-events-none" />
 
-        <div className="relative max-w-6xl mx-auto px-6 py-28 md:py-40">
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {/* rating badge */}
-            <div className="inline-flex items-center gap-2 bg-[#F59E0B]/10 border border-[#F59E0B]/25 text-[#FCD34D] px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-10">
-              <Star className="w-3.5 h-3.5 fill-current" />
-              {BUSINESS.rating.toFixed(1)} Google Rating · {BUSINESS.reviewCount}+ Reviews
-            </div>
+        {/* Dark gradient overlay */}
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(135deg,rgba(10,14,26,.82) 0%,rgba(15,23,42,.65) 50%,rgba(26,14,6,.78) 100%)" }}
+        />
 
-            <h1 className="text-[clamp(2.8rem,7vw,5.5rem)] font-extrabold text-white leading-[1.0] tracking-tight max-w-xl">
-              Quality<br />
-              <span className="text-[#F59E0B]">Vehicles.</span><br />
-              Honest Prices.
-            </h1>
+        {/* Subtle grid */}
+        <div
+          className="absolute inset-0 opacity-[0.025]"
+          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "80px 80px" }}
+        />
 
-            <p className="mt-8 text-slate-400 text-lg md:text-xl max-w-md leading-relaxed">
-              Family-owned dealership in Newmanstown, PA.{" "}
-              {BUSINESS.yearsInBusiness}&nbsp;years of trusted service to Lebanon County.
-            </p>
+        {/* Orange glow */}
+        <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle,rgba(249,115,22,.10) 0%,transparent 65%)" }} />
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle,rgba(59,130,246,.07) 0%,transparent 65%)" }} />
 
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link
-                href="#inventory"
-                className="inline-flex items-center gap-2 bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1F3A] font-extrabold px-7 py-3.5 rounded-xl text-sm transition-colors shadow-lg shadow-amber-500/20"
-              >
-                Browse Inventory
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="#contact"
-                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold px-7 py-3.5 rounded-xl text-sm transition-colors"
-              >
-                Visit Us
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+        <div className="relative mx-auto max-w-7xl px-6 py-28 w-full">
+          <div className="max-w-2xl">
 
-      {/* ── STATS BAR ────────────────────────────────────────────── */}
-      <section className="border-b border-slate-200 bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { value: `${BUSINESS.yearsInBusiness}+`, label: "Years Local" },
-              { value: `${BUSINESS.rating.toFixed(1)}★`, label: "Google Rating" },
-              { value: `${BUSINESS.reviewCount}+`,      label: "Happy Customers" },
-              { value: "100%",                           label: "Family-Owned" },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 + 0.2, duration: 0.5, ease: "easeOut" }}
-              >
-                <div className="text-3xl font-extrabold text-[#0B1F3A]">{stat.value}</div>
-                <div className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold mt-1.5">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── INVENTORY ────────────────────────────────────────────── */}
-      <section id="inventory" className="max-w-6xl mx-auto px-6 py-24">
-        <FadeUp>
-          <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
-            <div>
-              <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-2">Inventory</p>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#0B1F3A] tracking-tight">Featured Vehicles</h2>
-            </div>
-            <Link href="#" className="text-sm font-bold text-[#0B1F3A] hover:text-[#F59E0B] transition-colors inline-flex items-center gap-1.5">
-              View all <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </FadeUp>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {FEATURED_VEHICLES.map((v, i) => (
-            <motion.article
-              key={v.id}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ delay: i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -5, transition: { duration: 0.25 } }}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:shadow-slate-200/70 transition-shadow cursor-pointer group"
-            >
-              {/* image placeholder */}
-              <div className="aspect-[16/9] bg-gradient-to-br from-[#0B1F3A] to-[#193860] flex items-center justify-center relative overflow-hidden">
-                <Car className="w-24 h-24 text-white/10" />
-                {/* shine effect */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent" />
-                {v.badge && (
-                  <span className="absolute top-3 left-3 bg-[#F59E0B] text-[#0B1F3A] text-[11px] font-extrabold px-3 py-1 rounded-lg">
-                    {v.badge}
-                  </span>
-                )}
-              </div>
-
-              <div className="p-5">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <h3 className="font-extrabold text-[#0B1F3A] text-lg leading-tight">
-                      {v.year} {v.make}
-                    </h3>
-                    <p className="text-slate-500 text-sm font-medium mt-0.5">{v.model}</p>
-                  </div>
-                  <span className="text-xl font-extrabold text-[#0B1F3A] whitespace-nowrap">
-                    {formatPrice(v.price)}
-                  </span>
-                </div>
-
-                <p className="mt-3 text-slate-400 text-sm">{formatMiles(v.miles)}</p>
-
-                <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-sm font-bold text-[#0B1F3A] group-hover:text-[#F59E0B] transition-colors inline-flex items-center gap-1.5">
-                    View Details <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                  <span className="text-[11px] text-slate-400 uppercase tracking-wide font-semibold">Pre-owned</span>
-                </div>
-              </div>
-            </motion.article>
-          ))}
-        </div>
-      </section>
-
-      {/* ── ABOUT ────────────────────────────────────────────────── */}
-      <section id="about" className="bg-[#0B1F3A]">
-        <div className="max-w-6xl mx-auto px-6 py-24">
-          <FadeUp className="text-center mb-16">
-            <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-3">Why Fine Motors</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              A different kind of dealership
-            </h2>
-            <p className="mt-4 text-slate-400 max-w-xl mx-auto leading-relaxed">
-              No tricks, no pressure — just honest service from a family that&apos;s been here for {BUSINESS.yearsInBusiness} years.
-            </p>
-          </FadeUp>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              {
-                icon: ShieldCheck,
-                title: "Honest Pricing",
-                text: "No hidden fees, no last-minute surprises. The price you see is the price you pay.",
-                accent: "#10B981",
-              },
-              {
-                icon: Car,
-                title: "Quality Vehicles",
-                text: "Every car is hand-picked and inspected. We only sell what we'd drive ourselves.",
-                accent: "#F59E0B",
-              },
-              {
-                icon: Users,
-                title: "Local & Trusted",
-                text: `Family-owned and operated in Newmanstown, PA for over ${BUSINESS.yearsInBusiness} years.`,
-                accent: "#818CF8",
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ delay: i * 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/8 transition-colors"
-              >
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
-                  style={{ backgroundColor: `${item.accent}20` }}
-                >
-                  <item.icon className="w-6 h-6" style={{ color: item.accent }} />
-                </div>
-                <h3 className="text-xl font-extrabold text-white mb-3">{item.title}</h3>
-                <p className="text-slate-400 leading-relaxed">{item.text}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── REVIEWS ──────────────────────────────────────────────── */}
-      <section id="reviews" className="max-w-6xl mx-auto px-6 py-24">
-        <FadeUp className="text-center mb-16">
-          <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-3">Customer Reviews</p>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[#0B1F3A] tracking-tight">
-            What our customers say
-          </h2>
-          <div className="flex items-center justify-center gap-1 mt-5">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-5 h-5 fill-[#F59E0B] text-[#F59E0B]" />
-            ))}
-            <span className="ml-2 text-slate-500 text-sm font-medium">5.0 on Google</span>
-          </div>
-        </FadeUp>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {REVIEWS.map((r, i) => (
+            {/* Badge */}
             <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ delay: i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="inline-flex items-center gap-2 mb-7 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm text-white/55"
             >
-              <div className="flex gap-1 mb-4">
-                {[...Array(r.rating)].map((_, idx) => (
-                  <Star key={idx} className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
-                ))}
-              </div>
-              <p className="text-slate-600 leading-relaxed text-[15px] flex-1">
-                &ldquo;{r.text}&rdquo;
-              </p>
-              <div className="flex items-center gap-3 mt-6 pt-5 border-t border-slate-200">
-                <div className="w-9 h-9 rounded-full bg-[#0B1F3A] text-white flex items-center justify-center text-sm font-extrabold shrink-0">
-                  {r.initial}
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-[#0B1F3A]">{r.name}</p>
-                  <p className="text-xs text-slate-400">Google Review</p>
-                </div>
-              </div>
+              <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse shrink-0" />
+              Family-Owned Since {new Date().getFullYear() - BUSINESS.yearsInBusiness} · Newmanstown, PA
             </motion.div>
-          ))}
+
+            {/* Headline */}
+            <motion.h1
+              className="text-5xl sm:text-6xl lg:text-[5.5rem] font-bold text-white leading-[1.04] tracking-tight mb-6"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Quality Used<br />
+              <span className="text-orange-400">Cars. Honest</span><br />
+              Prices.
+            </motion.h1>
+
+            <motion.p
+              className="text-lg sm:text-xl text-white/45 max-w-md mb-10 leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            >
+              No pressure. No hidden fees. {BUSINESS.yearsInBusiness}&nbsp;years serving Lebanon County.
+            </motion.p>
+
+            {/* Search bar */}
+            <motion.div
+              className="flex flex-col sm:flex-row gap-2 p-2 rounded-2xl bg-white/[0.08] backdrop-blur border border-white/10 max-w-2xl mb-10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <select
+                value={searchMake}
+                onChange={(e) => setSearchMake(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-xl bg-white/10 text-white border-0 text-sm focus:outline-none focus:ring-1 focus:ring-orange-400/50 cursor-pointer"
+                style={{ colorScheme: "dark" }}
+              >
+                <option value="">Any Make</option>
+                {["Chevrolet","Dodge","Ford","Honda","Hyundai","Jeep","Nissan","Toyota"].map(m => <option key={m}>{m}</option>)}
+              </select>
+              <select
+                value={searchPrice}
+                onChange={(e) => setSearchPrice(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-xl bg-white/10 text-white border-0 text-sm focus:outline-none focus:ring-1 focus:ring-orange-400/50 cursor-pointer"
+                style={{ colorScheme: "dark" }}
+              >
+                <option value="">Any Price</option>
+                <option value="1">Under $15k</option>
+                <option value="2">$15k – $25k</option>
+                <option value="3">$25k – $35k</option>
+                <option value="4">$35k+</option>
+              </select>
+              <a
+                href="#inventory"
+                className="px-8 py-3 rounded-xl bg-orange-500 text-white font-semibold text-sm hover:bg-orange-600 active:bg-orange-700 transition-colors whitespace-nowrap text-center"
+              >
+                Search Cars
+              </a>
+            </motion.div>
+
+            {/* Trust signals */}
+            <motion.div
+              className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/35"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+            >
+              {["No Hidden Fees","No-Pressure Sales","5.0★ Google Rating","Family-Owned"].map((t) => (
+                <span key={t} className="flex items-center gap-1.5">
+                  <CheckCircle className="w-4 h-4 text-orange-400 shrink-0" />
+                  {t}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Scroll cue */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/20">
+          <span className="text-[10px] tracking-widest uppercase">Scroll</span>
+          <div className="w-px h-10 bg-gradient-to-b from-white/20 to-transparent" />
         </div>
       </section>
 
-      {/* ── CONTACT ──────────────────────────────────────────────── */}
-      <section id="contact" className="bg-slate-50 border-t border-slate-200">
-        <div className="max-w-6xl mx-auto px-6 py-24 grid grid-cols-1 md:grid-cols-2 gap-16">
-          <FadeUp>
-            <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-3">Visit Us</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#0B1F3A] leading-tight mb-6 tracking-tight">
-              Stop by the lot —<br />we&apos;d love to meet you
-            </h2>
-            <p className="text-slate-500 leading-relaxed mb-8">
-              Located right off Stiegel Pike. Take a look around, ask questions, take a test drive.
-              No pressure, ever.
-            </p>
-
-            <div className="space-y-4">
-              {[
-                {
-                  icon: MapPin,
-                  label: `${BUSINESS.address.street}, ${BUSINESS.address.city}, ${BUSINESS.address.state} ${BUSINESS.address.zip}`,
-                  href: BUSINESS.googleMapsUrl,
-                  external: true,
-                },
-                {
-                  icon: Phone,
-                  label: BUSINESS.phone,
-                  href: `tel:${BUSINESS.phoneHref}`,
-                  external: false,
-                },
-                {
-                  icon: Mail,
-                  label: BUSINESS.email,
-                  href: `mailto:${BUSINESS.email}`,
-                  external: false,
-                },
-              ].map((item, i) => (
-                <a
-                  key={i}
-                  href={item.href}
-                  target={item.external ? "_blank" : undefined}
-                  rel={item.external ? "noopener noreferrer" : undefined}
-                  className="flex items-center gap-4 group"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-[#0B1F3A] flex items-center justify-center shrink-0">
-                    <item.icon className="w-4.5 h-4.5 text-[#F59E0B]" />
-                  </div>
-                  <span className="text-slate-600 group-hover:text-[#0B1F3A] transition-colors text-sm font-medium break-all">
-                    {item.label}
-                  </span>
-                </a>
-              ))}
-            </div>
-
-            <a
-              href={BUSINESS.googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-8 bg-[#0B1F3A] hover:bg-[#162E50] text-white px-6 py-3 rounded-xl text-sm font-bold transition-colors"
-            >
-              Get Directions <ArrowRight className="w-4 h-4" />
-            </a>
-          </FadeUp>
-
-          <FadeUp delay={0.1}>
-            <p className="text-[#F59E0B] text-[11px] font-extrabold uppercase tracking-widest mb-3">Hours</p>
-            <h3 className="text-xl font-extrabold text-[#0B1F3A] mb-6 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-[#F59E0B]" />
-              When we&apos;re open
-            </h3>
-
-            <div className="divide-y divide-slate-200">
-              {BUSINESS.hours.map((h) => (
-                <div key={h.day} className="flex justify-between py-4">
-                  <span className="font-semibold text-[#0B1F3A]">{h.day}</span>
-                  <span className={`text-sm font-medium ${h.time === "Closed" ? "text-rose-400" : "text-slate-500"}`}>
-                    {h.time}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA card */}
-            <div className="mt-8 bg-[#0B1F3A] rounded-2xl p-6 text-white">
-              <div className="flex items-center gap-2 mb-3">
-                <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
-                <span className="font-extrabold text-[15px]">Ready to find your next car?</span>
+      {/* ── STATS ─────────────────────────────────────────────────── */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-gray-100">
+            {STATS.map((s) => (
+              <div key={s.label} className="py-8 px-6 text-center">
+                <div className="text-3xl font-bold text-gray-900 mb-1 tabular-nums">{s.value}</div>
+                <div className="text-sm text-gray-400">{s.label}</div>
               </div>
-              <p className="text-slate-400 text-sm leading-relaxed mb-5">
-                Call us or stop by — we&apos;ll find the right vehicle for your needs and budget.
-              </p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── INVENTORY ─────────────────────────────────────────────── */}
+      <section id="inventory" className="py-24 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-6">
+          <FadeUp>
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <div className="text-xs font-semibold text-orange-500 tracking-widest uppercase mb-2">Inventory</div>
+                <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Featured Vehicles</h2>
+              </div>
               <a
                 href={`tel:${BUSINESS.phoneHref}`}
-                className="inline-flex items-center gap-2 bg-[#F59E0B] text-[#0B1F3A] px-5 py-2.5 rounded-xl text-sm font-extrabold hover:bg-[#D97706] transition-colors"
+                className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors"
               >
-                <Phone className="w-4 h-4" />
-                {BUSINESS.phone}
+                Call for Full Inventory
+                <ArrowRight className="w-4 h-4" />
               </a>
             </div>
           </FadeUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {FEATURED_VEHICLES.map((car, i) => (
+              <motion.article
+                key={car.id}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: i * 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="relative h-56 overflow-hidden bg-gray-900">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={car.img}
+                    alt={`${car.year} ${car.make} ${car.model}`}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/20" />
+                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-orange-500 text-white text-xs font-semibold z-10">
+                    {car.badge}
+                  </span>
+                  <span className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm text-white text-sm font-bold z-10">
+                    ${car.price}
+                  </span>
+                </div>
+
+                <div className="p-5">
+                  <div className="text-xs text-gray-400 font-medium mb-1">{car.year}</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">{car.make} {car.model}</h3>
+                  <div className="flex items-center gap-4 text-sm text-gray-400 mb-5">
+                    <span>{car.mileage} mi</span>
+                    <span className="flex items-center gap-1.5 text-emerald-600 font-medium">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      Inspected
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-gray-900">${car.price}</span>
+                    <a
+                      href={`tel:${BUSINESS.phoneHref}`}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-colors"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      Call About This
+                    </a>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────── */}
-      <footer className="bg-[#071528]">
-        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-[#0B1F3A] border border-white/10 flex items-center justify-center">
-              <Car className="w-3.5 h-3.5 text-[#F59E0B]" />
-            </div>
-            <span className="text-slate-500 text-sm">
-              © {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.
-            </span>
+      {/* ── WHY US ────────────────────────────────────────────────── */}
+      <section id="why-us" className="py-24 bg-white">
+        <div className="mx-auto max-w-7xl px-6">
+          <FadeUp className="text-center mb-16">
+            <div className="text-xs font-semibold text-orange-500 tracking-widest uppercase mb-3">Why Fine Motors</div>
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">
+              The difference is in<br className="hidden sm:block" /> the details.
+            </h2>
+          </FadeUp>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {FEATURES.map((f, i) => (
+              <motion.div
+                key={f.title}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className="text-center"
+              >
+                <div className="w-12 h-12 mx-auto mb-5 rounded-xl bg-orange-50 flex items-center justify-center">
+                  <f.icon className="w-5 h-5 text-orange-500" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">{f.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
+              </motion.div>
+            ))}
           </div>
-          <div className="flex gap-6 text-sm text-slate-600">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms"   className="hover:text-white transition-colors">Terms</Link>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ──────────────────────────────────────────── */}
+      <section className="py-24 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-6">
+          <FadeUp className="text-center mb-16">
+            <div className="text-xs font-semibold text-orange-500 tracking-widest uppercase mb-3">The Process</div>
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">How It Works</h2>
+          </FadeUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {STEPS.map((step, i) => (
+              <motion.div
+                key={step.n}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: i * 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className="relative text-center"
+              >
+                {i < STEPS.length - 1 && (
+                  <div className="hidden md:block absolute top-8 left-[calc(50%+2rem)] right-[calc(-50%+2rem)] h-px bg-orange-100" />
+                )}
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white border-2 border-orange-200 flex items-center justify-center shadow-sm relative z-10">
+                  <span className="text-base font-bold text-orange-500 font-mono">{step.n}</span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">{step.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed max-w-xs mx-auto">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── REVIEWS ───────────────────────────────────────────────── */}
+      <section id="reviews" className="py-24 bg-white">
+        <div className="mx-auto max-w-7xl px-6">
+          <FadeUp className="text-center mb-16">
+            <div className="text-xs font-semibold text-orange-500 tracking-widest uppercase mb-3">Reviews</div>
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">What Our Customers Say</h2>
+          </FadeUp>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {REVIEWS.map((r, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: i * 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className="p-7 rounded-2xl border border-gray-100 bg-gray-50/80 hover:border-orange-100 hover:bg-orange-50/20 transition-colors"
+              >
+                <div className="flex gap-0.5 mb-5">
+                  {[...Array(r.rating)].map((_, idx) => (
+                    <Star key={idx} className="w-4 h-4 fill-orange-400 text-orange-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 text-sm leading-relaxed mb-6">&ldquo;{r.text}&rdquo;</p>
+                <div>
+                  <div className="font-semibold text-gray-900 text-sm">{r.name}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{r.location}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA / CONTACT ─────────────────────────────────────────── */}
+      <section
+        id="contact"
+        className="py-24 overflow-hidden"
+        style={{ background: "linear-gradient(135deg,#0f172a 0%,#1a0e06 100%)" }}
+      >
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <FadeUp>
+            <div className="text-xs font-semibold text-orange-400 tracking-widest uppercase mb-4">Get Started</div>
+            <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-5">
+              Ready to Find<br />Your Next Car?
+            </h2>
+            <p className="text-white/40 text-lg mb-10 leading-relaxed">
+              Browse our hand-picked inventory or give us a call.<br className="hidden sm:block" />
+              We&apos;ll help you find the right fit — no pressure, ever.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/inventory"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-orange-500 text-white font-semibold hover:bg-orange-600 transition-colors text-center"
+              >
+                Browse Inventory
+              </Link>
+              <a
+                href={`tel:${BUSINESS.phoneHref}`}
+                className="w-full sm:w-auto px-8 py-4 rounded-xl border border-white/15 text-white/70 font-medium hover:border-white/30 hover:text-white transition-all text-center"
+              >
+                Call {BUSINESS.phone}
+              </a>
+            </div>
+
+            <div className="mt-12 pt-10 border-t border-white/10 flex flex-wrap items-center justify-center gap-6 text-sm text-white/25">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5" />
+                {BUSINESS.address.street}, {BUSINESS.address.city}, {BUSINESS.address.state}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" />
+                Mon–Fri 9am–5pm · Sat 9am–3pm
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5" />
+                {BUSINESS.email}
+              </span>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ── FOOTER ────────────────────────────────────────────────── */}
+      <footer className="bg-slate-950 border-t border-white/5 py-8">
+        <div className="mx-auto max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/20">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-orange-500 flex items-center justify-center shrink-0">
+              <Car className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="text-white/40 font-semibold tracking-tight">Fine Motors LLC</span>
+          </div>
+          <span>© {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.</span>
+          <div className="flex gap-5">
+            <Link href="/privacy" className="hover:text-white/40 transition-colors">Privacy Policy</Link>
+            <Link href="/terms"   className="hover:text-white/40 transition-colors">Terms</Link>
           </div>
         </div>
       </footer>
 
     </div>
+    </MotionConfig>
   );
 }

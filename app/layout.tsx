@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["700", "800", "900"],
+  variable: "--font-barlow",
   display: "swap",
 });
 
@@ -26,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-<html lang="en" className={inter.variable} suppressHydrationWarning>
+<html lang="en" className={`${inter.variable} ${barlowCondensed.variable}`} suppressHydrationWarning>
         <body className="font-sans antialiased">{children}</body>
     </html>
   );
