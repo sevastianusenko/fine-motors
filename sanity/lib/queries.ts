@@ -13,6 +13,24 @@ export const VEHICLES_QUERY = groq`
     status,
     description,
     features,
-    "img": mainImage.asset->url + "?w=640&q=80",
+    "img": mainImage.asset->url,
+  }
+`;
+
+export const VEHICLE_BY_ID_QUERY = groq`
+  *[_type == "vehicle" && _id == $id][0] {
+    _id,
+    make,
+    model,
+    year,
+    price,
+    miles,
+    body,
+    badge,
+    status,
+    description,
+    features,
+    "img": mainImage.asset->url,
+    "gallery": gallery[].asset->url,
   }
 `;
