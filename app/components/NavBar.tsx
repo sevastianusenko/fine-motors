@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Car, Phone, Menu, X } from "lucide-react";
+import { Phone, Menu, X } from "lucide-react";
 
 const PHONE     = "(717) 644-5444";
 const PHONE_TEL = "+17176445444";
@@ -27,14 +28,15 @@ export function NavBar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
 
         {/* Logo */}
-        <Link href="/" onClick={close} className="flex items-center gap-2.5 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center shrink-0">
-            <Car className="w-4 h-4 text-white" />
-          </div>
-          <div className="leading-none">
-            <span className="font-bold text-[17px] tracking-tight text-gray-900 block">Fine Motors</span>
-            <span className="text-gray-400 text-[10px] uppercase tracking-widest font-semibold block mt-0.5 hidden sm:block">LLC · Newmanstown, PA</span>
-          </div>
+        <Link href="/" onClick={close} className="shrink-0">
+          <Image
+            src="/logo.png"
+            alt="Fine Motors LLC"
+            width={140}
+            height={52}
+            className="h-10 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}
