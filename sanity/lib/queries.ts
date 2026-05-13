@@ -21,7 +21,7 @@ export const VEHICLE_BY_ID_QUERY = groq`
   *[_type == "vehicle" && _id == $id][0] {
     _id, make, model, year, price, miles, body, badge, status,
     fuel, drivetrain, transmission, engine,
-    exteriorColor, interiorColor, accidents, vin,
+    exteriorColor, interiorColor, accidents, titleStatus, vin,
     description, features,
     "img": mainImage.asset->url,
     "gallery": gallery[].asset->url,

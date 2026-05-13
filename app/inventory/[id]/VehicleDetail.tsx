@@ -261,26 +261,24 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
               </div>
             )}
 
-            {/* Accident history + VIN */}
-            {(vehicle.accidents || vehicle.vin) && (
+            {/* Title Status + VIN */}
+            {(vehicle.titleStatus || vehicle.vin) && (
               <div className="flex flex-wrap gap-3">
-                {vehicle.accidents && (
+                {vehicle.titleStatus && (
                   <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold ${
-                    vehicle.accidents === "none"
+                    vehicle.titleStatus === "clean"
                       ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                       : "bg-amber-50 border-amber-200 text-amber-700"
                   }`}>
-                    <CheckCircle className="w-4 h-4" />
-                    {vehicle.accidents === "none"     && "No accidents reported"}
-                    {vehicle.accidents === "one"      && "1 accident reported"}
-                    {vehicle.accidents === "multiple" && "Multiple accidents reported"}
-                    {vehicle.accidents === "unknown"  && "Accident history unknown"}
+                    <Shield className="w-4 h-4" />
+                    {vehicle.titleStatus === "clean"   && "Clean Title"}
+                    {vehicle.titleStatus === "rebuilt" && "Rebuilt Title"}
                   </div>
                 )}
                 {vehicle.vin && (
-                  <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-600">
-                    <span className="font-bold text-gray-400 text-xs uppercase">VIN</span>
-                    <span className="font-mono">{vehicle.vin}</span>
+                  <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-200 bg-emerald-50 text-sm">
+                    <span className="font-bold text-emerald-600 text-xs uppercase">VIN</span>
+                    <span className="font-mono text-emerald-700">{vehicle.vin}</span>
                   </div>
                 )}
               </div>

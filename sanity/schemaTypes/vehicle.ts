@@ -200,6 +200,21 @@ export const vehicleType = defineType({
       initialValue: "none",
     }),
 
+    // ── TITLE STATUS ─────────────────────────────────────────────────
+    defineField({
+      name:  "titleStatus",
+      title: "Title Status",
+      type:  "string",
+      options: {
+        list: [
+          { title: "Clean Title",    value: "clean"    },
+          { title: "Rebuilt Title",  value: "rebuilt"  },
+        ],
+        layout: "radio",
+      },
+      initialValue: "clean",
+    }),
+
     // ── EXTRA PHOTOS ─────────────────────────────────────────────────
     defineField({
       name:  "gallery",
@@ -211,40 +226,127 @@ export const vehicleType = defineType({
     // ── DESCRIPTION ──────────────────────────────────────────────────
     defineField({
       name:        "description",
-      title:       "Description (optional)",
+      title:       "Description (shown on website)",
       type:        "text",
       rows:        4,
-      description: "Condition, service history, notable features, accident-free, etc.",
+      description: "Condition, service history, notable features, etc.",
     }),
 
     // ── FEATURES ─────────────────────────────────────────────────────
     defineField({
       name:        "features",
-      title:       "Key Features (optional)",
+      title:       "Key Features (shown on website)",
       type:        "array",
       description: 'Type a feature and press Enter. e.g. Sunroof, Backup Camera, Heated Seats',
       of:          [{ type: "string" }],
       options:     { layout: "tags" },
+    }),
+
+    // ════════════════════════════════════════════════════════════════
+    //  INTERNAL / BUSINESS FIELDS  (not shown on website)
+    // ════════════════════════════════════════════════════════════════
+
+    // ── ACQUISITION ──────────────────────────────────────────────────
+    defineField({
+      name:  "vehicleSource",
+      title: "🔒 Vehicle Source (internal)",
+      type:  "string",
+      description: "Where did you acquire this vehicle?",
+      options: {
+        list: ["Auction", "Trade-in", "Private Seller", "Dealer", "Other"],
+      },
+    }),
+    defineField({
+      name:        "purchasePrice",
+      title:       "🔒 Purchase Price — What You Paid (internal)",
+      type:        "number",
+      description: "Cost to acquire. Used to calculate profit. NOT shown on website.",
+    }),
+    defineField({
+      name:        "purchaseDate",
+      title:       "🔒 Date Purchased (internal)",
+      type:        "date",
+      description: "When you bought this vehicle.",
+    }),
+    defineField({
+      name:        "condition",
+      title:       "🔒 Condition Grade (internal)",
+      type:        "string",
+      description: "Internal condition rating for your records.",
+      options: {
+        list: [
+          { title: "⭐⭐⭐⭐⭐  Excellent — like new",    value: "excellent" },
+          { title: "⭐⭐⭐⭐    Good — minor wear",        value: "good"      },
+          { title: "⭐⭐⭐      Fair — visible wear",      value: "fair"      },
+          { title: "⭐⭐        Rough — needs work",       value: "rough"     },
+        ],
+        layout: "radio",
+      },
+      initialValue: "good",
+    }),
+
+    // ── SALE TRACKING ─────────────────────────────────────────────────
+    defineField({
+      name:        "soldDate",
+      title:       "🔒 Date Sold (internal)",
+      type:        "date",
+      description: "When was this vehicle sold?",
+      hidden:      ({ document }) => document?.status !== "sold",
+    }),
+    defineField({
+      name:        "soldPrice",
+      title:       "🔒 Final Sale Price (internal)",
+      type:        "number",
+      description: "The actual price it sold for (may differ from asking price).",
+      hidden:      ({ document }) => document?.status !== "sold",
+    }),
+    defineField({
+      name:        "buyerName",
+      title:       "🔒 Buyer Name (internal)",
+      type:        "string",
+      hidden:      ({ document }) => document?.status !== "sold",
+    }),
+
+    // ── INTERNAL NOTES ────────────────────────────────────────────────
+    defineField({
+      name:        "internalNotes",
+      title:       "🔒 Internal Notes (not shown on website)",
+      type:        "text",
+      rows:        4,
+      description: "Repairs done, issues to disclose, negotiation notes, etc.",
     }),
   ],
 
   // ── PREVIEW ───────────────────────────────────────────────────────
   preview: {
     select: {
-      make:   "make",
-      model:  "model",
-      year:   "year",
-      price:  "price",
-      status: "status",
-      media:  "mainImage",
+      make:          "make",
+      model:         "model",
+      year:          "year",
+      price:         "price",
+      status:        "status",
+      media:         "mainImage",
+      purchasePrice: "purchasePrice",
+      soldPrice:     "soldPrice",
+      soldDate:      "soldDate",
     },
-    prepare({ make, model, year, price, status, media }) {
+    prepare({ make, model, year, price, status, media, purchasePrice, soldPrice, soldDate }) {
       const icon  = status === "sold" ? "🔴" : "✅";
-      const label = status === "sold" ? "Sold" : "Available";
       const p     = price ? `$${Number(price).toLocaleString("en-US")}` : "—";
+
+      let extra = "";
+      if (status === "sold" && soldPrice && purchasePrice) {
+        const profit = Number(soldPrice) - Number(purchasePrice);
+        const sign   = profit >= 0 ? "+" : "";
+        extra = `  ·  Profit: ${sign}$${Math.abs(profit).toLocaleString("en-US")}`;
+      }
+      if (status === "sold" && soldDate) {
+        extra += `  ·  Sold ${soldDate}`;
+      }
+
       return {
         title:    `${year ?? ""} ${make ?? ""} ${model ?? ""}`.trim() || "New Vehicle",
-        subtitle: `${p}  ·  ${icon} ${label}`,
+        subtitle: `${p}  ·  ${icon} ${status === "sold" ? "Sold" : "Available"}${extra}`,
         media,
       };
     },

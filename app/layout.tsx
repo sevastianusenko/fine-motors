@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Barlow_Condensed } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -35,6 +36,13 @@ export default function RootLayout({
   return (
 <html lang="en" className={`${inter.variable} ${barlowCondensed.variable}`} suppressHydrationWarning>
         <body className="font-sans antialiased">{children}</body>
-    </html>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-4QD7EM6XML" strategy="afterInteractive" />
+        <Script id="gtag-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-4QD7EM6XML');
+        `}</Script>
+      </html>
   );
 }
