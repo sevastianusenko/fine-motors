@@ -69,8 +69,8 @@ const LOCAL_BUSINESS_SCHEMA = {
   },
   "geo": {
     "@type": "GeoCoordinates",
-    "latitude": 40.3565,
-    "longitude": -76.2369,
+    "latitude": 40.2764215,
+    "longitude": -76.2955624,
   },
   "openingHoursSpecification": [
     {
@@ -102,6 +102,7 @@ const LOCAL_BUSINESS_SCHEMA = {
   ],
   "sameAs": [
     "https://www.facebook.com/profile.php?id=61589849182930",
+    "https://www.google.com/maps/place/Fine+Motors+LLC/@40.2764215,-76.2955624,16z/data=!4m6!3m5!1s0x89c61b4e74139de9:0x446115ce8efa98c7!8m2!3d40.2764215!4d-76.2955624!16s%2Fg%2F11vbr72fvn",
   ],
 };
 
