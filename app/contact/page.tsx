@@ -82,18 +82,23 @@ export default function ContactPage() {
 
       <NavBar />
 
-      {/* ── HERO STRIP ─────────────────────────────────────────────── */}
-      <section className="bg-[#0a0e1a] relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize: "60px 60px" }}
+      {/* ── HERO BANNER ────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden" style={{ height: "clamp(300px, 45vw, 520px)" }}>
+        {/* Photo */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/our place.png"
+          alt="Fine Motors LLC lot"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle,rgba(249,115,22,.08) 0%,transparent 65%)" }} />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-        <div className="relative mx-auto max-w-7xl px-6 py-16">
-          <div className="flex items-center gap-2 text-xs text-white/30 mb-4">
-            <Link href="/" className="hover:text-white/60 transition-colors">Home</Link>
+        {/* Content */}
+        <div className="relative h-full flex flex-col justify-end mx-auto max-w-7xl px-6 pb-10">
+          <div className="flex items-center gap-2 text-xs text-white/40 mb-4">
+            <Link href="/" className="hover:text-white/70 transition-colors">Home</Link>
             <span>/</span>
             <span className="text-white/60">Contact</span>
           </div>
@@ -103,10 +108,10 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            Get in Touch
+            Come Visit Us
           </motion.h1>
           <motion.p
-            className="text-white/45 text-lg max-w-lg"
+            className="text-white/60 text-lg max-w-lg"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
