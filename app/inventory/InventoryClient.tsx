@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -116,7 +117,16 @@ function FilterGroup({ title, options, selected, onToggle, getCounts }: {
 // ── MAIN CLIENT COMPONENT ─────────────────────────────────────────────────
 
 export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
-  const [filters, setFilters] = useState<Filters>(EMPTY);
+  const searchParams = useSearchParams();
+  const [filters, setFilters] = useState<Filters>(() => {
+    const make  = searchParams.get("make");
+    const price = searchParams.get("price");
+    return {
+      ...EMPTY,
+      makes:       make  ? [make]  : [],
+      priceRanges: price ? [price] : [],
+    };
+  });
   const [sort, setSort]       = useState("year-desc");
   const [page, setPage]       = useState(1);
   const [mobileOpen, setMO]   = useState(false);

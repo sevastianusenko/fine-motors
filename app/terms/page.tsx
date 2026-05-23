@@ -87,7 +87,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">7. Intellectual Property</h2>
             <p>
-              All content on this Site — including text, images, logos, and design — is the
+              All content on this Site (text, images, logos, and design) is the
               property of Fine Motors LLC or its content suppliers and is protected by applicable
               copyright laws. Unauthorized use is prohibited.
             </p>

@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import { client } from "@/sanity/lib/client";
 import { VEHICLES_QUERY } from "@/sanity/lib/queries";
 import { InventoryClient, type Vehicle } from "./InventoryClient";
+
+export const metadata: Metadata = {
+  title: "Used Car Inventory — SUVs, Trucks & Sedans",
+  description:
+    "Browse Fine Motors LLC's current inventory in Newmanstown, PA. SUVs, trucks, sedans and more. Honest prices, no hidden fees, every car personally inspected. Call (717) 644-5444.",
+};
 
 // ── STATIC FALLBACK ───────────────────────────────────────────────────────
 // Used when Sanity is not yet configured. Remove once CMS is set up.
@@ -71,5 +79,9 @@ export default async function InventoryPage() {
     }
   }
 
-  return <InventoryClient vehicles={vehicles} />;
+  return (
+    <Suspense>
+      <InventoryClient vehicles={vehicles} />
+    </Suspense>
+  );
 }

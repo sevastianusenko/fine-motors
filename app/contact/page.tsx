@@ -16,9 +16,9 @@ const PHONE     = "(717) 644-5444";
 const PHONE_TEL = "+17176445444";
 const EMAIL     = "Finemotorsautosales@gmail.com";
 const ADDRESS   = "3910 Stiegel Pike, Newmanstown, PA 17073";
-const MAPS_URL  = "https://www.google.com/maps/search/?api=1&query=3910+Stiegel+Pike+Newmanstown+PA+17073";
+const MAPS_URL  = "https://www.google.com/maps/place/Fine+Motors+LLC/@40.2764215,-76.2955624,16z/data=!4m6!3m5!1s0x89c61b4e74139de9:0x446115ce8efa98c7!8m2!3d40.2764215!4d-76.2955624!16s%2Fg%2F11vbr72fvn";
 const MAPS_EMBED =
-  "https://maps.google.com/maps?q=3910+Stiegel+Pike+Newmanstown+PA+17073&t=&z=15&ie=UTF8&iwloc=&output=embed";
+  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2416!2d-76.2955624!3d40.2764215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c61b4e74139de9%3A0x446115ce8efa98c7!2sFine+Motors+LLC!5e0!3m2!1sen!2sus!4v1716484800000!5m2!1sen!2sus";
 
 const HOURS = [
   { day: "Monday – Friday", time: "9:00 AM – 5:00 PM", open: true  },
@@ -37,22 +37,22 @@ const TRUST_POINTS = [
   {
     icon: ShieldCheck,
     title: "No Hidden Fees, Ever",
-    desc: "We believe in complete transparency. The price listed is the final price — no dealer fees, no surprise add-ons at the end.",
+    desc: "The price on the car is the price you pay. No dealer fees, no documentation charges, nothing tacked on at the end.",
   },
   {
     icon: ThumbsUp,
     title: "Zero Sales Pressure",
-    desc: "Take all the time you need. Our team is here to answer questions and help you find the right car, not to push you into a decision.",
+    desc: "Take all the time you need. We're here to answer questions and help you find the right car. That's it.",
   },
   {
     icon: Users,
     title: "Family-Owned Since 2009",
-    desc: "We're your neighbors, not a big-box dealership. Every customer is treated like family because that's how we were raised to do business.",
+    desc: "Igor runs this place himself. You're not talking to a commission-based salesperson. You're talking to the owner.",
   },
   {
     icon: BadgeCheck,
     title: "Every Car Inspected",
-    desc: "We hand-pick and thoroughly inspect every vehicle before it hits the lot. We only sell cars we'd put our own family in.",
+    desc: "Igor picks and inspects every car personally before it goes on the lot. If he wouldn't drive it, we don't sell it.",
   },
 ];
 
@@ -116,7 +116,7 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
-            We&apos;re a family-run dealership — reach out any time and we&apos;ll get back to you personally.
+            We&apos;re a family-run dealership. Reach out any time and we&apos;ll get back to you personally.
           </motion.p>
         </div>
       </section>
@@ -149,7 +149,7 @@ export default function ContactPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Come Visit the Lot</h2>
             <p className="text-gray-500 leading-relaxed mb-8">
               Located right off Stiegel Pike in Newmanstown. Stop by, take a look around,
-              ask us anything — no appointment needed.
+              ask us anything. No appointment needed.
             </p>
 
             {/* Contact cards */}
@@ -279,8 +279,7 @@ export default function ContactPage() {
               A dealership you can actually trust.
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto leading-relaxed">
-              We know buying a used car can feel stressful. That&apos;s why we built everything about Fine Motors
-              around honesty, transparency, and no-pressure service.
+              We know buying a used car isn&apos;t always a great experience. So we keep it simple: show you the car, tell you the truth, and let you decide.
             </p>
           </FadeUp>
 
@@ -321,10 +320,10 @@ export default function ContactPage() {
                   Based on 25+ verified customer reviews
                 </p>
                 <blockquote className="text-white/70 text-base sm:text-lg italic max-w-2xl mx-auto leading-relaxed mb-6">
-                  &ldquo;Great experience from start to finish. No pressure, fair pricing, and the car was exactly as described.
-                  Fine Motors is the real deal — wouldn&apos;t go anywhere else.&rdquo;
+                  &ldquo;No pressure, fair price, car was exactly as described. Drove from Harrisburg and would do it again.
+                  Fine Motors is the real deal.&rdquo;
                 </blockquote>
-                <p className="text-white/30 text-sm font-semibold">— Michael R., Lebanon County, PA</p>
+                <p className="text-white/30 text-sm font-semibold">Michael R., Lebanon County, PA</p>
 
                 <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                   <a

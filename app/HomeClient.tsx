@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, MotionConfig } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import {
   Phone, Star, Car, ShieldCheck, Users, ArrowRight,
   CheckCircle, MapPin, Mail, Clock,
@@ -50,22 +50,22 @@ const STATS = [
 ];
 
 const FEATURES = [
-  { icon: ShieldCheck, title: "Honest Pricing",    desc: "No hidden fees, no last-minute surprises. The price you see is the price you pay."            },
-  { icon: Car,         title: "Quality Vehicles",  desc: "Every car is hand-picked and inspected. We only sell what we'd drive ourselves."              },
-  { icon: CheckCircle, title: "No-Pressure Sales", desc: "Take your time, ask every question. We're here to help, not to rush you."                    },
-  { icon: Users,       title: "Family-Owned",      desc: `Operated right here in Newmanstown, PA for over ${BUSINESS.yearsInBusiness} years.`          },
+  { icon: ShieldCheck, title: "Honest Pricing",    desc: "No hidden fees, no last-minute surprises. The price you see is the price you pay."  },
+  { icon: Car,         title: "Quality Vehicles",  desc: "Every car is hand-picked and personally inspected. We only sell what we'd drive ourselves." },
+  { icon: CheckCircle, title: "No-Pressure Sales", desc: "Take your time, ask every question. We're here to help you find the right car, not to rush you into anything." },
+  { icon: Users,       title: "Family-Owned",      desc: `Igor and his family have been right here in Newmanstown for over ${BUSINESS.yearsInBusiness} years. You deal with the owner, not a salesperson.` },
 ];
 
 const STEPS = [
-  { n: "01", title: "Browse Inventory",  desc: "Explore our selection of hand-picked vehicles with fair, transparent pricing."    },
-  { n: "02", title: "Schedule a Visit",  desc: "Give us a call or stop by the lot. We'll have the car ready and waiting."        },
-  { n: "03", title: "Drive It Home",     desc: "Simple paperwork, honest deal. Most customers are on the road the same day."     },
+  { n: "01", title: "Browse Inventory",  desc: "Check out our current selection online or just stop by. Every car is priced fairly with no games."  },
+  { n: "02", title: "Come Take a Look",  desc: "Give us a call or swing by the lot. No appointment needed. We'll have the car ready for you."       },
+  { n: "03", title: "Drive It Home",     desc: "Straightforward paperwork, honest price. Most people are on the road the same day they visit."      },
 ];
 
 const REVIEWS = [
-  { name: "Michael R.", location: "Lebanon County, PA", rating: 5, text: "Great experience from start to finish. No pressure, fair pricing, and the car was exactly as described. Highly recommend." },
-  { name: "Sarah K.",   location: "Lebanon County, PA", rating: 5, text: "Family-run dealership with real integrity. They went above and beyond to make sure I was happy with my purchase."         },
-  { name: "James P.",   location: "Lebanon County, PA", rating: 5, text: "Honest, straightforward, and friendly. I'll definitely come back when it's time for our next vehicle."                    },
+  { name: "Michael R.", location: "Lebanon, PA",        rating: 5, text: "Bought my RAV4 here last spring. No pressure at all, price was fair, and the car was exactly what they said. Really good experience." },
+  { name: "Sarah K.",   location: "Palmyra, PA",        rating: 5, text: "Igor was great to work with. Didn't try to upsell me on anything. Drove 40 minutes to get here and it was worth it."                  },
+  { name: "James P.",   location: "Myerstown, PA",      rating: 5, text: "Honest people. Car was clean, priced right, and they had the paperwork done fast. Already told my brother to go there."                 },
 ];
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -94,6 +94,19 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
   const [searchMake, setSearchMake]   = useState("");
   const [searchPrice, setSearchPrice] = useState("");
 
+  const makes = useMemo(
+    () => [...new Set(featuredVehicles.map(v => v.make))].sort(),
+    [featuredVehicles]
+  );
+
+  const inventoryHref = useMemo(() => {
+    const p = new URLSearchParams();
+    if (searchMake)  p.set("make",  searchMake);
+    if (searchPrice) p.set("price", searchPrice);
+    const q = p.toString();
+    return `/inventory${q ? `?${q}` : ""}`;
+  }, [searchMake, searchPrice]);
+
   return (
     <MotionConfig reducedMotion="user">
     <div className="min-h-dvh bg-white text-gray-900 font-sans antialiased">
@@ -102,74 +115,263 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
       <NavBar />
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0e1a]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80" alt=""
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-50" loading="eager" />
-        <div className="absolute inset-0" style={{ background:"linear-gradient(135deg,rgba(10,14,26,.82) 0%,rgba(15,23,42,.65) 50%,rgba(26,14,6,.78) 100%)" }} />
-        <div className="absolute inset-0 opacity-[0.025]"
-          style={{ backgroundImage:"linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize:"80px 80px" }} />
-        <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background:"radial-gradient(circle,rgba(249,115,22,.10) 0%,transparent 65%)" }} />
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#04060f]">
 
-        <div className="relative mx-auto max-w-7xl px-6 py-28 w-full">
-          <div className="max-w-2xl">
-            <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{duration:0.6,ease:[0.22,1,0.36,1]}}
-              className="inline-flex items-center gap-2 mb-7 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm text-white/55">
-              <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse shrink-0" />
-              Family-Owned Since {new Date().getFullYear() - BUSINESS.yearsInBusiness} · Newmanstown, PA
+        <style>{`
+          @keyframes hero-shimmer {
+            0%   { background-position: 200% center; }
+            100% { background-position: -200% center; }
+          }
+          .shimmer-text {
+            background: linear-gradient(90deg,#f97316 0%,#fbbf24 25%,#fed7aa 50%,#f97316 75%,#ea580c 100%);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: hero-shimmer 4s linear infinite;
+          }
+          #search-make option, #search-price option {
+            background-color: #111827;
+            color: #ffffff;
+          }
+        `}</style>
+
+        {/* Ken Burns — slow continuous zoom-in */}
+        <motion.div className="absolute inset-0"
+          initial={{ scale: 1.0 }}
+          animate={{ scale: 1.10 }}
+          transition={{ duration: 20, ease: "linear", repeat: Infinity, repeatType: "mirror" }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80" alt=""
+            className="w-full h-full object-cover object-center opacity-[0.30]" loading="eager" />
+        </motion.div>
+
+        {/* Directional gradient — dark left, opens toward image right */}
+        <div className="absolute inset-0" style={{
+          background:"linear-gradient(to right,rgba(4,6,15,0.98) 0%,rgba(4,6,15,0.85) 42%,rgba(4,6,15,0.40) 100%)"
+        }} />
+        {/* Bottom vignette */}
+        <div className="absolute inset-0" style={{
+          background:"linear-gradient(to top,rgba(4,6,15,1) 0%,transparent 32%)"
+        }} />
+
+        {/* Subtle grid */}
+        <div className="absolute inset-0 opacity-[0.018]"
+          style={{ backgroundImage:"linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize:"80px 80px" }} />
+
+        {/* Orb — large orange, top-left */}
+        <motion.div className="absolute pointer-events-none"
+          style={{ top:"-12%", left:"-8%", width:1000, height:1000, borderRadius:"50%",
+            background:"radial-gradient(circle,rgba(249,115,22,.10) 0%,transparent 58%)" }}
+          animate={{ y:[-40,40,-40], x:[-20,20,-20] }}
+          transition={{ duration:11, repeat:Infinity, ease:"easeInOut" }}
+        />
+        {/* Orb — indigo, bottom-right */}
+        <motion.div className="absolute pointer-events-none"
+          style={{ bottom:"-15%", right:"-5%", width:700, height:700, borderRadius:"50%",
+            background:"radial-gradient(circle,rgba(99,102,241,.08) 0%,transparent 58%)" }}
+          animate={{ y:[35,-35,35], x:[20,-20,20] }}
+          transition={{ duration:13, repeat:Infinity, ease:"easeInOut", delay:2 }}
+        />
+        {/* Orb — gold accent, mid-right */}
+        <motion.div className="absolute pointer-events-none"
+          style={{ top:"28%", right:"10%", width:380, height:380, borderRadius:"50%",
+            background:"radial-gradient(circle,rgba(251,191,36,.05) 0%,transparent 65%)" }}
+          animate={{ y:[-22,22,-22] }}
+          transition={{ duration:8, repeat:Infinity, ease:"easeInOut", delay:1 }}
+        />
+
+        {/* Diagonal light sweep */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <motion.div
+            style={{ position:"absolute", inset:0,
+              background:"linear-gradient(105deg,transparent 37%,rgba(255,255,255,.032) 50%,transparent 63%)" }}
+            initial={{ x:"-100%" }}
+            animate={{ x:"200%" }}
+            transition={{ duration:4, repeat:Infinity, repeatDelay:9, ease:"easeInOut", delay:2.5 }}
+          />
+        </div>
+
+        {/* Vertical side accent — luxury editorial detail */}
+        <motion.div className="absolute left-5 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-3"
+          initial={{ opacity:0, x:-10 }}
+          animate={{ opacity:1, x:0 }}
+          transition={{ duration:0.9, delay:1.1, ease:[0.16,1,0.3,1] }}
+        >
+          <div className="w-px h-14 bg-gradient-to-b from-transparent to-white/[0.10]" />
+          <span className="text-[9px] font-bold tracking-[0.35em] uppercase text-white/12"
+            style={{ writingMode:"vertical-lr", transform:"rotate(180deg)" }}>
+            Est. {new Date().getFullYear() - BUSINESS.yearsInBusiness}
+          </span>
+          <div className="w-px h-14 bg-gradient-to-b from-white/[0.10] to-transparent" />
+        </motion.div>
+
+        {/* ── Main content ───────────────────────── */}
+        <div className="relative mx-auto max-w-7xl px-8 lg:px-16 py-36 w-full">
+          <div className="max-w-3xl">
+
+            {/* Badge */}
+            <motion.div
+              className="inline-flex items-center gap-2.5 mb-9 px-4 py-2 rounded-full border border-white/[0.07] bg-white/[0.03] backdrop-blur-sm text-[11px] text-white/35 tracking-wide"
+              initial={{ opacity:0, y:14 }}
+              animate={{ opacity:1, y:0 }}
+              transition={{ duration:0.6, ease:[0.16,1,0.3,1] }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse shrink-0" />
+              Family-Owned · Newmanstown, PA · Est. {new Date().getFullYear() - BUSINESS.yearsInBusiness}
+              <span className="w-px h-3 bg-white/10" />
+              <span className="text-orange-400/70 text-[9px]">★★★★★</span>
+              <span className="text-white/20">5.0 Google</span>
             </motion.div>
 
-            <motion.h1 className="text-5xl sm:text-6xl lg:text-[5.5rem] font-bold text-white leading-[1.04] tracking-tight mb-6"
-              initial={{opacity:0,y:24}} animate={{opacity:1,y:0}} transition={{duration:0.7,delay:0.1,ease:[0.22,1,0.36,1]}}>
-              Quality Used<br />
-              <span className="text-orange-400">Cars. Honest</span><br />Prices.
-            </motion.h1>
+            {/* Overline + drawing accent line */}
+            <div className="mb-5">
+              <motion.p
+                className="text-orange-400/65 font-semibold text-[11px] uppercase tracking-[0.28em] mb-2.5"
+                initial={{ opacity:0 }}
+                animate={{ opacity:1 }}
+                transition={{ duration:0.5, delay:0.18 }}
+              >
+                Fine Motors LLC
+              </motion.p>
+              <div className="overflow-hidden h-px w-32">
+                <motion.div className="h-full bg-gradient-to-r from-orange-500/60 via-orange-400/30 to-transparent"
+                  initial={{ x:"-100%" }}
+                  animate={{ x:"0%" }}
+                  transition={{ duration:1.1, delay:0.22, ease:[0.16,1,0.3,1] }}
+                />
+              </div>
+            </div>
 
-            <motion.p className="text-lg sm:text-xl text-white/45 max-w-md mb-10 leading-relaxed"
-              initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:0.7,delay:0.2,ease:[0.22,1,0.36,1]}}>
-              No pressure. No hidden fees. {BUSINESS.yearsInBusiness}&nbsp;years serving Lebanon County.
+            {/* H1 — line-by-line cinematic reveal */}
+            <h1 className="mb-7 tracking-tight">
+              <div className="overflow-hidden">
+                <motion.div
+                  className="text-5xl sm:text-6xl lg:text-[5.8rem] font-bold text-white leading-[1.04]"
+                  initial={{ y:"108%" }}
+                  animate={{ y:"0%" }}
+                  transition={{ duration:0.82, delay:0.28, ease:[0.16,1,0.3,1] }}
+                >
+                  Quality Used
+                </motion.div>
+              </div>
+              <div className="overflow-hidden">
+                <motion.div
+                  className="text-5xl sm:text-6xl lg:text-[5.8rem] font-bold leading-[1.04]"
+                  initial={{ y:"108%" }}
+                  animate={{ y:"0%" }}
+                  transition={{ duration:0.82, delay:0.38, ease:[0.16,1,0.3,1] }}
+                >
+                  <span className="shimmer-text">Cars.</span>
+                  <span className="text-white"> Honest</span>
+                </motion.div>
+              </div>
+              <div className="overflow-hidden">
+                <motion.div
+                  className="text-5xl sm:text-6xl lg:text-[5.8rem] font-bold text-white/60 leading-[1.04]"
+                  initial={{ y:"108%" }}
+                  animate={{ y:"0%" }}
+                  transition={{ duration:0.82, delay:0.48, ease:[0.16,1,0.3,1] }}
+                >
+                  Prices.
+                </motion.div>
+              </div>
+            </h1>
+
+            {/* Subtitle */}
+            <motion.p className="text-sm sm:text-base text-white/28 max-w-xs mb-10 leading-relaxed"
+              initial={{ opacity:0, y:12 }}
+              animate={{ opacity:1, y:0 }}
+              transition={{ duration:0.7, delay:0.60, ease:[0.16,1,0.3,1] }}
+            >
+              No pressure. No hidden fees.<br />{BUSINESS.yearsInBusiness}&nbsp;years serving Lebanon County.
             </motion.p>
 
-            <motion.div className="flex flex-col sm:flex-row gap-2 p-2 rounded-2xl bg-white/[0.08] backdrop-blur border border-white/10 max-w-2xl mb-10"
-              initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:0.7,delay:0.3,ease:[0.22,1,0.36,1]}}>
+            {/* Search bar */}
+            <motion.div
+              className="flex flex-col sm:flex-row gap-1.5 p-1.5 rounded-2xl bg-white/[0.05] backdrop-blur border border-white/[0.08] max-w-2xl mb-10"
+              initial={{ opacity:0, y:16 }}
+              animate={{ opacity:1, y:0 }}
+              transition={{ duration:0.7, delay:0.70, ease:[0.16,1,0.3,1] }}
+            >
               <label htmlFor="search-make" className="sr-only">Filter by make</label>
               <select id="search-make" value={searchMake} onChange={e => setSearchMake(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl bg-white/10 text-white border-0 text-sm focus:outline-none focus:ring-1 focus:ring-orange-400/50 cursor-pointer"
+                className="flex-1 px-4 py-3.5 rounded-xl bg-white/[0.07] text-white border-0 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/40 cursor-pointer"
                 style={{colorScheme:"dark"}}>
                 <option value="">Any Make</option>
-                {["Chevrolet","Dodge","Ford","Honda","Hyundai","Jeep","Nissan","Subaru","Toyota"].map(m=><option key={m}>{m}</option>)}
+                {makes.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
               <label htmlFor="search-price" className="sr-only">Filter by price</label>
               <select id="search-price" value={searchPrice} onChange={e => setSearchPrice(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-xl bg-white/10 text-white border-0 text-sm focus:outline-none focus:ring-1 focus:ring-orange-400/50 cursor-pointer"
+                className="flex-1 px-4 py-3.5 rounded-xl bg-white/[0.07] text-white border-0 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500/40 cursor-pointer"
                 style={{colorScheme:"dark"}}>
                 <option value="">Any Price</option>
-                <option value="1">Under $15k</option>
-                <option value="2">$15k – $25k</option>
-                <option value="3">$25k – $35k</option>
-                <option value="4">$35k+</option>
+                <option value="Under $15k">Under $15k</option>
+                <option value="$15k – $20k">$15k – $20k</option>
+                <option value="$20k – $25k">$20k – $25k</option>
+                <option value="$25k – $30k">$25k – $30k</option>
+                <option value="$30k+">$30k+</option>
               </select>
-              <Link href="/inventory"
-                className="px-8 py-3 rounded-xl bg-orange-500 text-white font-semibold text-sm hover:bg-orange-600 transition-colors whitespace-nowrap text-center">
-                Search Cars
+              <Link href={inventoryHref}
+                className="px-8 py-3.5 rounded-xl bg-orange-500 text-white font-semibold text-sm hover:bg-orange-600 active:scale-[0.97] transition-all whitespace-nowrap text-center">
+                View Inventory
               </Link>
             </motion.div>
 
-            <motion.div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/35"
-              initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.7,delay:0.4}}>
-              {["No Hidden Fees","No-Pressure Sales","5.0★ Google Rating","Family-Owned"].map(t=>(
+            {/* Trust badges */}
+            <motion.div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/22"
+              initial={{ opacity:0 }}
+              animate={{ opacity:1 }}
+              transition={{ duration:0.7, delay:0.80 }}
+            >
+              {["No Hidden Fees","No-Pressure Sales","5.0★ Google","Family-Owned 15+ yrs"].map(t=>(
                 <span key={t} className="flex items-center gap-1.5">
-                  <CheckCircle className="w-4 h-4 text-orange-400 shrink-0" />{t}
+                  <CheckCircle className="w-3.5 h-3.5 text-orange-400/55 shrink-0" />{t}
                 </span>
               ))}
             </motion.div>
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/20">
-          <span className="text-[10px] tracking-widest uppercase">Scroll</span>
-          <div className="w-px h-10 bg-gradient-to-b from-white/20 to-transparent" />
+        {/* ── Bottom glassmorphism info strip ─────── */}
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 border-t border-white/[0.055] bg-white/[0.022] backdrop-blur-xl"
+          initial={{ opacity:0, y:14 }}
+          animate={{ opacity:1, y:0 }}
+          transition={{ duration:0.9, delay:1.05, ease:[0.16,1,0.3,1] }}
+        >
+          <div className="mx-auto max-w-7xl px-8 lg:px-16 py-4 flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-6 text-[11px] text-white/22">
+              <a href={`tel:${BUSINESS.phoneHref}`} className="flex items-center gap-1.5 hover:text-white/45 transition-colors cursor-pointer">
+                <Phone className="w-3 h-3 text-orange-400/45 shrink-0" />
+                {BUSINESS.phone}
+              </a>
+              <span className="hidden sm:flex items-center gap-1.5">
+                <MapPin className="w-3 h-3 text-orange-400/45 shrink-0" />
+                {BUSINESS.address.street}, {BUSINESS.address.city}, {BUSINESS.address.state}
+              </span>
+              <span className="hidden md:flex items-center gap-1.5">
+                <Clock className="w-3 h-3 text-orange-400/45 shrink-0" />
+                Mon–Fri 9–5 · Sat 9–3
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 text-[10px] text-white/14">
+              <span className="text-orange-400/35 text-[9px]">★★★★★</span>
+              5.0 · Google Reviews
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Mouse scroll indicator */}
+        <div className="absolute bottom-20 right-10 hidden lg:flex flex-col items-center gap-3">
+          <span className="text-[9px] tracking-[0.25em] uppercase text-white/12">Scroll</span>
+          <div className="w-5 h-8 rounded-full border border-white/[0.13] flex justify-center pt-1.5">
+            <motion.div className="w-1 h-2 rounded-full bg-white/25"
+              animate={{ y:[0,14,0], opacity:[0.7,0.05,0.7] }}
+              transition={{ duration:2.2, repeat:Infinity, ease:"easeInOut" }}
+            />
+          </div>
         </div>
       </section>
 
@@ -339,6 +541,86 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
         </div>
       </section>
 
+      {/* ── SERVICE AREA ──────────────────────────────────────────── */}
+      <section className="py-14 bg-white border-t border-gray-100">
+        <div className="mx-auto max-w-7xl px-6">
+          <FadeUp className="text-center mb-8">
+            <div className="text-xs font-semibold text-orange-500 tracking-widest uppercase mb-2">Where We Serve</div>
+            <h2 className="text-2xl font-bold text-gray-900">Serving All of Central Pennsylvania</h2>
+            <p className="text-gray-400 text-sm mt-2">People drive from all over Central PA to buy from us. Fair price, straight talk, no hassle.</p>
+          </FadeUp>
+          <FadeUp>
+            <div className="flex flex-wrap justify-center gap-2">
+              {[
+                "Lebanon, PA","Palmyra, PA","Myerstown, PA","Annville, PA",
+                "Jonestown, PA","Hershey, PA","Harrisburg, PA","Reading, PA",
+                "Lancaster, PA","Elizabethtown, PA","Ephrata, PA","Lititz, PA",
+                "Quakertown, PA","Pottsville, PA","Kutztown, PA",
+              ].map(city => (
+                <span key={city}
+                  className="px-3.5 py-1.5 rounded-full border border-gray-200 text-sm text-gray-500 bg-gray-50">
+                  {city}
+                </span>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ── FAQ ───────────────────────────────────────────────────── */}
+      <section className="py-20 bg-gray-50 border-t border-gray-100">
+        <div className="mx-auto max-w-3xl px-6">
+          <FadeUp className="text-center mb-12">
+            <div className="text-xs font-semibold text-orange-500 tracking-widest uppercase mb-3">FAQ</div>
+            <h2 className="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
+          </FadeUp>
+          <FadeUp>
+            <div className="space-y-4">
+              {[
+                {
+                  q: "Where is Fine Motors LLC located?",
+                  a: "We're at 3910 Stiegel Pike, Newmanstown, PA 17073. Right in Lebanon County. Easy to find, free parking, no appointment needed.",
+                },
+                {
+                  q: "What kinds of vehicles do you sell?",
+                  a: "Mostly sedans, SUVs, crossovers, and trucks. Igor personally picks and inspects every car before it goes on the lot. If it doesn't meet his standards, it doesn't go up for sale.",
+                },
+                {
+                  q: "Are there any hidden fees?",
+                  a: "Nope. The price on the car is what you pay. No dealer fees, no documentation surprises, nothing added on at the end. What you see is what you get.",
+                },
+                {
+                  q: "Do you take trade-ins?",
+                  a: "Yes. Call us at (717) 644-5444 and tell us about your car. We'll give you a straight answer on what it's worth and apply it toward your purchase.",
+                },
+                {
+                  q: "Can I take it for a test drive?",
+                  a: "Of course. Just call ahead or stop by during business hours. Mon-Fri 9am to 5pm, Saturday 9am to 3pm. No appointment necessary.",
+                },
+                {
+                  q: "How long has Fine Motors been open?",
+                  a: `We've been here in Newmanstown for over ${BUSINESS.yearsInBusiness} years. Most of our business comes from repeat customers and referrals. That's how we know we're doing something right.`,
+                },
+                {
+                  q: "How far do people come to buy from you?",
+                  a: "People come from Lebanon, Palmyra, Myerstown, Hershey, Harrisburg, Reading, Lancaster, and beyond. Some drive over an hour. We think that says a lot.",
+                },
+              ].map((item, i) => (
+                <details key={i} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                  <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer font-semibold text-gray-900 list-none hover:text-orange-600 transition-colors">
+                    {item.q}
+                    <span className="shrink-0 w-6 h-6 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 font-bold text-lg group-open:rotate-45 transition-transform">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-sm text-gray-500 leading-relaxed border-t border-gray-50 pt-4">
+                    {item.a}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
       {/* ── CTA ───────────────────────────────────────────────────── */}
       <section id="contact" className="py-24 overflow-hidden"
         style={{background:"linear-gradient(135deg,#0f172a 0%,#1a0e06 100%)"}}>
@@ -347,8 +629,8 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
             <div className="text-xs font-semibold text-orange-400 tracking-widest uppercase mb-4">Get Started</div>
             <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-5">Ready to Find<br />Your Next Car?</h2>
             <p className="text-white/40 text-lg mb-10 leading-relaxed">
-              Browse our hand-picked inventory or give us a call.<br className="hidden sm:block" />
-              We&apos;ll help you find the right fit — no pressure, ever.
+              Come see what we have on the lot, or just give us a call.<br className="hidden sm:block" />
+              We&apos;ll help you find the right car. No pressure, ever.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/inventory" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-orange-500 text-white font-semibold hover:bg-orange-600 transition-colors text-center">

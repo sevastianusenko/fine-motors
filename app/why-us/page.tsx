@@ -93,19 +93,19 @@ const STORY = [
     year: "The Beginning",
     icon: Heart,
     title: "Born in the Garage",
-    text: "Growing up, Igor and his brother spent every free hour around cars. While other kids were playing video games, they were under the hood — learning, tinkering, figuring out how things worked. It wasn't a chore. It was joy. The smell of motor oil, the satisfaction of hearing an engine fire up after hours of work — that's what shaped them.",
+    text: "Growing up, Igor and his brother spent every free hour around cars. While other kids were playing video games, they were under the hood: learning, tinkering, figuring out how things worked. It wasn't a chore. It was joy. The smell of motor oil, the satisfaction of hearing an engine fire up after hours of work. That's what shaped them.",
   },
   {
     year: "The Calling",
     icon: Wrench,
     title: "Helping Neighbors First",
-    text: "Word travels fast in a small town. Friends, neighbors, relatives — everyone came to them when a car had a problem. They never turned anyone away. They'd work late into the night, charge nothing or almost nothing, just because they loved it. That's when they realized: this isn't just a hobby. This is who we are.",
+    text: "Word travels fast in a small town. Friends, neighbors, relatives, everyone came to them when a car had a problem. They never turned anyone away. They'd work late into the night, charge nothing or almost nothing, just because they loved it. That's when it clicked: this isn't just a hobby. This is who we are.",
   },
   {
     year: "The Mission",
     icon: Car,
     title: "Fine Motors Was Born",
-    text: "The natural next step was helping people find good cars — not just fix them. Too many families were getting taken advantage of at big dealerships. Igor set out to do it differently: hand-pick every vehicle, price them fairly, and treat every customer like a neighbor. No games, no pressure, no hidden fees. Just honest people helping honest people.",
+    text: "The natural next step was helping people find good cars, not just fix them. Too many families were getting taken advantage of at big dealerships. Igor set out to do it differently: hand-pick every vehicle, price it fairly, and treat every customer like a neighbor. No games, no pressure, no hidden fees.",
   },
 ];
 
@@ -118,12 +118,12 @@ const WHY_US = [
   {
     icon: Users,
     title: "You talk to the owner, not a salesperson",
-    desc: "When you call or stop by, you're talking directly to the person who runs the business — not a commissioned salesperson with a quota to hit.",
+    desc: "When you call or stop by, you're talking directly to the person who runs the business. Not a commissioned salesperson with a quota to hit.",
   },
   {
     icon: Heart,
     title: "This is a passion, not just a paycheck",
-    desc: "Customers consistently say you can feel it — Igor genuinely loves cars and genuinely cares about the people buying them. That's rare, and it shows in every interaction.",
+    desc: "Customers say you can feel it. Igor genuinely loves cars and genuinely cares about the people buying them. That's rare, and it shows.",
   },
   {
     icon: CheckCircle,
@@ -141,7 +141,7 @@ const STEPS = [
   {
     n: "02",
     title: "Come See It in Person",
-    desc: "Stop by at 3910 Stiegel Pike, Newmanstown. Take your time. Test drive. Ask every question — Igor loves talking about his cars.",
+    desc: "Stop by at 3910 Stiegel Pike, Newmanstown. Take your time. Test drive. Ask every question. Igor loves talking about his cars.",
   },
   {
     n: "03",
@@ -242,7 +242,7 @@ export default function WhyUsPage() {
               transition={{ duration: 0.7, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
             >
               Fine Motors started with a simple idea: help people find great cars at honest prices,
-              the way you&apos;d help a friend — no tricks, no pressure, no BS.
+              the way you&apos;d help a friend. No tricks, no pressure, no games.
             </motion.p>
 
             {/* Quote */}
@@ -255,7 +255,7 @@ export default function WhyUsPage() {
               <p className="text-white/60 italic text-base leading-relaxed">
                 &ldquo;You get such a feel for this being a passion of his, not just a business.&rdquo;
               </p>
-              <p className="text-white/30 text-sm font-semibold mt-2">— Nicholas Rosenblatt, Google Review</p>
+              <p className="text-white/30 text-sm font-semibold mt-2">Nicholas Rosenblatt, Google Review</p>
             </motion.div>
           </div>
         </div>
@@ -539,7 +539,7 @@ export default function WhyUsPage() {
               Ready to find your next car?
             </h2>
             <p className="text-white/40 text-lg mb-10 leading-relaxed">
-              Browse the inventory or give Igor a call. No scripts, no pressure — just a straight conversation with someone who knows cars.
+              Browse the inventory or give Igor a call. No scripts, no pressure. Just a straight conversation with someone who knows cars.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
