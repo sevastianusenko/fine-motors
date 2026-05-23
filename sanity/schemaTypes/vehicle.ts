@@ -1,6 +1,87 @@
 import { defineType, defineField } from "sanity";
 import { VinDecoderInput } from "../components/VinDecoderInput";
 
+const EXTERIOR_COLORS = [
+  { title: "Black",            value: "Black"            },
+  { title: "White",            value: "White"            },
+  { title: "White Pearl",      value: "White Pearl"      },
+  { title: "Silver",           value: "Silver"           },
+  { title: "Gray",             value: "Gray"             },
+  { title: "Charcoal",         value: "Charcoal"         },
+  { title: "Dark Gray",        value: "Dark Gray"        },
+  { title: "Red",              value: "Red"              },
+  { title: "Burgundy / Maroon",value: "Burgundy"         },
+  { title: "Blue",             value: "Blue"             },
+  { title: "Dark Blue / Navy", value: "Dark Blue"        },
+  { title: "Light Blue",       value: "Light Blue"       },
+  { title: "Green",            value: "Green"            },
+  { title: "Dark Green",       value: "Dark Green"       },
+  { title: "Brown",            value: "Brown"            },
+  { title: "Beige / Champagne",value: "Beige"            },
+  { title: "Gold / Bronze",    value: "Gold"             },
+  { title: "Orange",           value: "Orange"           },
+  { title: "Yellow",           value: "Yellow"           },
+  { title: "Other / Two-Tone", value: "Other"            },
+];
+
+const INTERIOR_COLORS = [
+  { title: "Black",         value: "Black"        },
+  { title: "Dark Gray",     value: "Dark Gray"    },
+  { title: "Gray",          value: "Gray"         },
+  { title: "Beige / Tan",   value: "Beige"        },
+  { title: "Cream / Ivory", value: "Cream"        },
+  { title: "Brown",         value: "Brown"        },
+  { title: "Red",           value: "Red"          },
+  { title: "White",         value: "White"        },
+  { title: "Two-Tone",      value: "Two-Tone"     },
+];
+
+const FEATURES_LIST = [
+  // Safety
+  { title: "Backup Camera",                value: "Backup Camera"                },
+  { title: "Blind Spot Monitor",           value: "Blind Spot Monitor"           },
+  { title: "Lane Departure Warning",       value: "Lane Departure Warning"       },
+  { title: "Forward Collision Warning",    value: "Forward Collision Warning"    },
+  { title: "Automatic Emergency Braking",  value: "Automatic Emergency Braking"  },
+  { title: "Parking Sensors",              value: "Parking Sensors"              },
+  { title: "Adaptive Cruise Control",      value: "Adaptive Cruise Control"      },
+  { title: "Rear Cross-Traffic Alert",     value: "Rear Cross-Traffic Alert"     },
+  // Technology
+  { title: "Apple CarPlay",               value: "Apple CarPlay"               },
+  { title: "Android Auto",               value: "Android Auto"               },
+  { title: "Bluetooth",                  value: "Bluetooth"                  },
+  { title: "Navigation System",          value: "Navigation System"          },
+  { title: "USB Ports",                  value: "USB Ports"                  },
+  { title: "Wireless Charging",          value: "Wireless Charging"          },
+  { title: "Premium Sound System",       value: "Premium Sound System"       },
+  { title: "Satellite Radio (SiriusXM)", value: "Satellite Radio"            },
+  { title: "Wi-Fi Hotspot",             value: "Wi-Fi Hotspot"             },
+  { title: "Digital Instrument Cluster", value: "Digital Instrument Cluster" },
+  // Comfort & Convenience
+  { title: "Heated Front Seats",         value: "Heated Front Seats"         },
+  { title: "Heated Rear Seats",          value: "Heated Rear Seats"          },
+  { title: "Ventilated / Cooled Seats",  value: "Cooled Seats"               },
+  { title: "Leather Interior",           value: "Leather Interior"           },
+  { title: "Sunroof / Moonroof",         value: "Sunroof"                    },
+  { title: "Panoramic Sunroof",          value: "Panoramic Sunroof"          },
+  { title: "Power Driver Seat",          value: "Power Driver Seat"          },
+  { title: "Memory Seats",              value: "Memory Seats"              },
+  { title: "Remote Start",              value: "Remote Start"              },
+  { title: "Keyless Entry",             value: "Keyless Entry"             },
+  { title: "Push Button Start",         value: "Push Button Start"         },
+  { title: "Power Tailgate / Liftgate", value: "Power Tailgate"            },
+  { title: "Power Sliding Door(s)",     value: "Power Sliding Door"        },
+  { title: "Third Row Seating",         value: "Third Row Seating"         },
+  { title: "Heated Steering Wheel",     value: "Heated Steering Wheel"     },
+  // Exterior & Towing
+  { title: "Alloy Wheels",             value: "Alloy Wheels"             },
+  { title: "Roof Rails / Crossbars",   value: "Roof Rails"               },
+  { title: "Running Boards",           value: "Running Boards"           },
+  { title: "Tow Package / Trailer Hitch", value: "Tow Package"           },
+  { title: "Bed Liner (Truck)",        value: "Bed Liner"                },
+  { title: "Tonneau Cover (Truck)",    value: "Tonneau Cover"            },
+];
+
 export const vehicleType = defineType({
   name:  "vehicle",
   title: "Vehicle",
@@ -55,13 +136,13 @@ export const vehicleType = defineType({
     }),
 
     defineField({
-      name:       "mainImage",
-      title:      "Main Photo",
-      type:       "image",
-      description: "Best angle — this is the photo shown on the inventory card and Facebook posts.",
-      options:    { hotspot: true },
-      validation: (R) => R.required().error("Please upload at least one photo"),
-      group:      "listing",
+      name:        "mainImage",
+      title:       "Main Photo",
+      type:        "image",
+      description: "Best angle — shown on the inventory card and Facebook posts.",
+      options:     { hotspot: true },
+      validation:  (R) => R.required().error("Please upload at least one photo"),
+      group:       "listing",
     }),
 
     defineField({
@@ -110,9 +191,9 @@ export const vehicleType = defineType({
     }),
 
     defineField({
-      name:    "badge",
-      title:   "Badge Label (optional)",
-      type:    "string",
+      name:        "badge",
+      title:       "Badge Label (optional)",
+      type:        "string",
       description: "Small highlighted label shown on the vehicle photo card.",
       options: {
         list: [
@@ -136,15 +217,15 @@ export const vehicleType = defineType({
       type:       "string",
       options: {
         list: [
-          { title: "Sedan",       value: "Sedan"       },
-          { title: "SUV",         value: "SUV"         },
-          { title: "Truck",       value: "Truck"       },
-          { title: "Crossover",   value: "Crossover"   },
-          { title: "Coupe",       value: "Coupe"       },
-          { title: "Van / Minivan", value: "Van"       },
-          { title: "Convertible", value: "Convertible" },
-          { title: "Wagon",       value: "Wagon"       },
-          { title: "Hatchback",   value: "Hatchback"   },
+          { title: "Sedan",         value: "Sedan"       },
+          { title: "SUV",           value: "SUV"         },
+          { title: "Truck",         value: "Truck"       },
+          { title: "Crossover",     value: "Crossover"   },
+          { title: "Coupe",         value: "Coupe"       },
+          { title: "Van / Minivan", value: "Van"         },
+          { title: "Convertible",   value: "Convertible" },
+          { title: "Wagon",         value: "Wagon"       },
+          { title: "Hatchback",     value: "Hatchback"   },
         ],
         layout: "radio",
       },
@@ -215,38 +296,34 @@ export const vehicleType = defineType({
       name:        "exteriorColor",
       title:       "Exterior Color",
       type:        "string",
-      description: "e.g. Pearl White, Midnight Black, Graphite Gray",
+      options:     { list: EXTERIOR_COLORS },
       group:       "specs",
     }),
 
     defineField({
-      name:        "interiorColor",
-      title:       "Interior Color",
-      type:        "string",
-      description: "e.g. Black Leather, Beige Cloth, Gray Cloth",
-      group:       "specs",
+      name:    "interiorColor",
+      title:   "Interior Color",
+      type:    "string",
+      options: { list: INTERIOR_COLORS },
+      group:   "specs",
+    }),
+
+    defineField({
+      name:        "features",
+      title:       "Features & Options",
+      type:        "array",
+      description: "Check everything that applies. These appear on the website and in Facebook posts.",
+      of:          [{ type: "string" }],
+      options: {
+        list:   FEATURES_LIST,
+        layout: "grid",
+      },
+      group: "specs",
     }),
 
     // ════════════════════════════════════════════════════════════════
     // TAB 3 — HISTORY & CONDITION
     // ════════════════════════════════════════════════════════════════
-
-    defineField({
-      name:         "accidents",
-      title:        "Accident History",
-      type:         "string",
-      options: {
-        list: [
-          { title: "No accidents reported",  value: "none"     },
-          { title: "1 accident reported",    value: "one"      },
-          { title: "Multiple accidents",     value: "multiple" },
-          { title: "Unknown",                value: "unknown"  },
-        ],
-        layout: "radio",
-      },
-      initialValue: "none",
-      group:        "history",
-    }),
 
     defineField({
       name:         "titleStatus",
@@ -270,10 +347,10 @@ export const vehicleType = defineType({
       type:    "string",
       options: {
         list: [
-          { title: "1 Owner",      value: "1" },
-          { title: "2 Owners",     value: "2" },
-          { title: "3+ Owners",    value: "3" },
-          { title: "Unknown",      value: "unknown" },
+          { title: "1 Owner",   value: "1"       },
+          { title: "2 Owners",  value: "2"       },
+          { title: "3+ Owners", value: "3"       },
+          { title: "Unknown",   value: "unknown" },
         ],
         layout: "radio",
       },
@@ -281,14 +358,14 @@ export const vehicleType = defineType({
     }),
 
     defineField({
-      name:    "keysCount",
-      title:   "Number of Keys",
-      type:    "string",
+      name:         "keysCount",
+      title:        "Number of Keys",
+      type:         "string",
       options: {
         list: [
-          { title: "2 Keys",    value: "2" },
-          { title: "1 Key",     value: "1" },
-          { title: "No Key",    value: "0" },
+          { title: "2 Keys",  value: "2" },
+          { title: "1 Key",   value: "1" },
+          { title: "No Key",  value: "0" },
         ],
         layout: "radio",
       },
@@ -297,34 +374,34 @@ export const vehicleType = defineType({
     }),
 
     defineField({
-      name:        "carfaxAvailable",
-      title:       "CARFAX Report Available",
-      type:        "boolean",
-      description: "Do you have a CARFAX report for this vehicle?",
+      name:         "carfaxAvailable",
+      title:        "CARFAX Report Available",
+      type:         "boolean",
+      description:  "Do you have a CARFAX report for this vehicle?",
       initialValue: false,
       group:        "history",
     }),
 
     defineField({
-      name:        "serviceRecords",
-      title:       "Service Records Available",
-      type:        "boolean",
-      description: "Are maintenance/service records available for this vehicle?",
+      name:         "serviceRecords",
+      title:        "Service Records Available",
+      type:         "boolean",
+      description:  "Are maintenance/service records available for this vehicle?",
       initialValue: false,
       group:        "history",
     }),
 
     defineField({
-      name:        "warrantyRemaining",
-      title:       "Warranty",
-      type:        "string",
-      description: "e.g. Factory warranty until 2026, No warranty, Extended warranty available",
+      name:    "warrantyRemaining",
+      title:   "Warranty",
+      type:    "string",
       options: {
         list: [
           { title: "Factory warranty remaining", value: "factory"  },
           { title: "Extended warranty",          value: "extended" },
           { title: "No warranty",                value: "none"     },
         ],
+        layout: "radio",
       },
       group: "history",
     }),
@@ -337,27 +414,29 @@ export const vehicleType = defineType({
       name:        "description",
       title:       "Vehicle Description",
       type:        "text",
-      rows:        5,
-      description: "Condition, service history, notable features. Shown on website and Facebook posts.",
+      rows:        6,
+      description: "Condition, service history, notable features. Shown on website and Facebook posts. Line breaks are preserved.",
       group:       "desc",
     }),
 
     defineField({
-      name:        "features",
-      title:       "Key Features",
+      name:        "customFeatures",
+      title:       "Additional Features (free text)",
       type:        "array",
-      description: "Type a feature and press Enter. e.g. Sunroof, Backup Camera, Heated Seats, Apple CarPlay",
+      description: "Anything not in the Specs checklist — type and press Enter.",
       of:          [{ type: "string" }],
       options:     { layout: "tags" },
       group:       "desc",
     }),
 
     defineField({
-      name:  "gallery",
-      title: "Additional Photos",
-      type:  "array",
-      of:    [{ type: "image", options: { hotspot: true } }],
-      group: "desc",
+      name:        "gallery",
+      title:       "Additional Photos",
+      type:        "array",
+      description: "Drag & drop multiple photos at once, or click Add to select several files.",
+      of:          [{ type: "image", options: { hotspot: true } }],
+      options:     { layout: "grid" },
+      group:       "desc",
     }),
 
     // ════════════════════════════════════════════════════════════════
@@ -402,10 +481,10 @@ export const vehicleType = defineType({
       description:  "Internal condition rating for your records.",
       options: {
         list: [
-          { title: "Excellent — like new",      value: "excellent" },
-          { title: "Good — minor wear",         value: "good"      },
-          { title: "Fair — visible wear",       value: "fair"      },
-          { title: "Rough — needs work",        value: "rough"     },
+          { title: "Excellent — like new",  value: "excellent" },
+          { title: "Good — minor wear",     value: "good"      },
+          { title: "Fair — visible wear",   value: "fair"      },
+          { title: "Rough — needs work",    value: "rough"     },
         ],
         layout: "radio",
       },
@@ -414,11 +493,11 @@ export const vehicleType = defineType({
     }),
 
     defineField({
-      name:        "soldDate",
-      title:       "Date Sold",
-      type:        "date",
-      hidden:      ({ document }) => document?.status !== "sold",
-      group:       "business",
+      name:   "soldDate",
+      title:  "Date Sold",
+      type:   "date",
+      hidden: ({ document }) => document?.status !== "sold",
+      group:  "business",
     }),
 
     defineField({
@@ -462,8 +541,8 @@ export const vehicleType = defineType({
       stockNumber:   "stockNumber",
     },
     prepare({ make, model, year, price, status, media, purchasePrice, soldPrice, soldDate, stockNumber }) {
-      const icon = status === "sold" ? "🔴" : "✅";
-      const p    = price ? `$${Number(price).toLocaleString("en-US")}` : "—";
+      const icon  = status === "sold" ? "🔴" : "✅";
+      const p     = price ? `$${Number(price).toLocaleString("en-US")}` : "—";
       const stock = stockNumber ? `  ·  #${stockNumber}` : "";
 
       let extra = "";

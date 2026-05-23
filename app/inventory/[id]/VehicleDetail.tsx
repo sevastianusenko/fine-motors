@@ -236,11 +236,11 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
             </div>
 
             {/* Features */}
-            {vehicle.features && vehicle.features.length > 0 && (
+            {((vehicle.features && vehicle.features.length > 0) || (vehicle.customFeatures && vehicle.customFeatures.length > 0)) && (
               <div>
-                <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Key Features</h2>
+                <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Features & Options</h2>
                 <div className="flex flex-wrap gap-2">
-                  {vehicle.features.map((f: string) => (
+                  {[...(vehicle.features ?? []), ...(vehicle.customFeatures ?? [])].map((f: string) => (
                     <span key={f}
                       className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-50 border border-orange-100 text-orange-700 text-sm font-medium">
                       <CheckCircle className="w-3.5 h-3.5" />
@@ -256,7 +256,7 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
               <div>
                 <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">About This Vehicle</h2>
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                  <p className="text-gray-700 leading-relaxed">{vehicle.description}</p>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{vehicle.description}</p>
                 </div>
               </div>
             )}

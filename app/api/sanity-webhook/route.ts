@@ -54,7 +54,10 @@ function buildPostText(v: Record<string, unknown>): string {
 
   if (v.description) text += `\n${v.description}\n`;
 
-  const featureList = Array.isArray(v.features) ? (v.features as string[]) : [];
+  const featureList = [
+    ...(Array.isArray(v.features)       ? (v.features       as string[]) : []),
+    ...(Array.isArray(v.customFeatures) ? (v.customFeatures as string[]) : []),
+  ];
   if (featureList.length > 0) {
     text += `\n✅ ${featureList.slice(0, 6).join("  •  ")}\n`;
   }
