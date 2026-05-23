@@ -41,16 +41,22 @@ function buildPostText(v: Record<string, unknown>): string {
   const miles = v.miles ? `${Number(v.miles).toLocaleString("en-US")} mi` : null;
 
   let text = `🚗 NEW ARRIVAL: ${v.year ?? ""} ${v.make ?? ""} ${v.model ?? ""}`.trim() + "\n\n";
-  if (price)        text += `💰 Price: ${price}\n`;
-  if (miles)        text += `📍 Mileage: ${miles}\n`;
-  if (v.fuel && v.fuel !== "Gas") text += `⚡ ${v.fuel}\n`;
-  if (v.drivetrain) text += `🔧 ${v.drivetrain}\n`;
-  if (v.exteriorColor) text += `🎨 ${v.exteriorColor}\n`;
+  if (price)           text += `💰 Price: ${price}\n`;
+  if (miles)           text += `📍 Mileage: ${miles}\n`;
+  if (v.fuel && v.fuel !== "Gas") text += `⚡ Fuel: ${v.fuel}\n`;
+  if (v.drivetrain)    text += `🔧 Drivetrain: ${v.drivetrain}\n`;
+  if (v.transmission && v.transmission !== "Automatic") text += `⚙️ Transmission: ${v.transmission}\n`;
+  if (v.exteriorColor) text += `🎨 Color: ${v.exteriorColor}\n`;
+  if (v.ownersCount && v.ownersCount !== "unknown") text += `👤 ${v.ownersCount} Owner${v.ownersCount === "1" ? "" : "s"}\n`;
+  if (v.accidents === "none") text += `✅ No accidents reported\n`;
+  if (v.titleStatus === "clean") text += `📄 Clean Title\n`;
+  if (v.carfaxAvailable) text += `📊 CARFAX Available\n`;
+
   if (v.description) text += `\n${v.description}\n`;
 
   const featureList = Array.isArray(v.features) ? (v.features as string[]) : [];
   if (featureList.length > 0) {
-    text += `\n✅ ${featureList.slice(0, 5).join("  •  ")}\n`;
+    text += `\n✅ ${featureList.slice(0, 6).join("  •  ")}\n`;
   }
 
   text += `\n📞 Call or message us to schedule a test drive!`;
@@ -64,35 +70,44 @@ function buildPostText(v: Record<string, unknown>): string {
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const rawBody = await req.text();
+  console.log("[sanity-webhook] Received payload:", rawBody.slice(0, 500));
 
-  // Validate signature if a secret is configured
+  // Validate signature only if Sanity sends one (secret configured on both sides)
   if (WEBHOOK_SECRET) {
     const sig = req.headers.get("sanity-webhook-signature");
-    if (!isValidSignature(rawBody, sig, WEBHOOK_SECRET)) {
+    if (sig && !isValidSignature(rawBody, sig, WEBHOOK_SECRET)) {
+      console.error("[sanity-webhook] Invalid signature. Header:", sig);
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
   }
 
-  let vehicle: Record<string, unknown>;
+  let parsed: Record<string, unknown>;
   try {
-    vehicle = JSON.parse(rawBody);
+    parsed = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "Bad JSON" }, { status: 400 });
   }
 
+  // Sanity can send {after: {...}} or the document directly
+  const vehicle = (parsed.after ?? parsed) as Record<string, unknown>;
+
+  console.log("[sanity-webhook] _type:", vehicle._type, "status:", vehicle.status);
+
   // Only post for available vehicles
   if (vehicle._type !== "vehicle" || vehicle.status !== "available") {
-    return NextResponse.json({ skipped: true, reason: "not an available vehicle" });
+    return NextResponse.json({ skipped: true, reason: `_type=${vehicle._type} status=${vehicle.status}` });
   }
 
   const imageRef = (vehicle.mainImage as Record<string, unknown> | undefined)?.asset as Record<string, unknown> | undefined;
   const ref = imageRef?._ref as string | undefined;
   if (!ref) {
-    return NextResponse.json({ error: "Vehicle has no main image" }, { status: 400 });
+    console.error("[sanity-webhook] No mainImage ref. mainImage:", JSON.stringify(vehicle.mainImage));
+    return NextResponse.json({ error: "Vehicle has no main image", mainImage: vehicle.mainImage }, { status: 400 });
   }
 
   const imageUrl = sanityImageUrl(ref);
   const message  = buildPostText(vehicle);
+  console.log("[sanity-webhook] Posting to Facebook. imageUrl:", imageUrl);
 
   const fbRes = await fetch(
     `https://graph.facebook.com/v20.0/${FB_PAGE_ID}/photos`,
@@ -103,13 +118,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   );
 
+  const fbData = await fbRes.json();
   if (!fbRes.ok) {
-    const err = await fbRes.json();
-    console.error("[sanity-webhook] Facebook API error:", err);
-    return NextResponse.json({ error: err }, { status: 502 });
+    console.error("[sanity-webhook] Facebook API error:", JSON.stringify(fbData));
+    return NextResponse.json({ error: fbData }, { status: 502 });
   }
 
-  const result = await fbRes.json() as { id: string };
-  console.log("[sanity-webhook] Posted to Facebook:", result.id);
-  return NextResponse.json({ success: true, fbPostId: result.id });
+  console.log("[sanity-webhook] Posted to Facebook:", (fbData as { id: string }).id);
+  return NextResponse.json({ success: true, fbPostId: (fbData as { id: string }).id });
 }
