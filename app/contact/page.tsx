@@ -87,7 +87,7 @@ export default function ContactPage() {
         {/* Photo */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/our place.png"
+          src="/our%20place.png"
           alt="Fine Motors LLC lot"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
