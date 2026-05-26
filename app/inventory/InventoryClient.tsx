@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Car, Phone, ChevronLeft, ChevronRight,
+  Car, Phone,
   SlidersHorizontal, X, Check, ChevronDown, ArrowRight,
 } from "lucide-react";
 import { NavBar } from "@/app/components/NavBar";
@@ -30,7 +30,7 @@ export type Vehicle = {
 
 const PHONE     = "(717) 644-5444";
 const PHONE_TEL = "+17176445444";
-const PER_PAGE  = 9;
+const PER_PAGE  = 50;
 
 const PRICE_RANGES = [
   { label: "Under $15k",  min: 0,     max: 15000    },
@@ -129,7 +129,6 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
     };
   });
   const [sort, setSort]       = useState("year-desc");
-  const [page, setPage]       = useState(1);
   const [mobileOpen, setMO]   = useState(false);
   const [sortOpen, setSO]     = useState(false);
 
@@ -143,10 +142,10 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
       const next = arr.includes(value) ? arr.filter(x => x !== value) : [...arr, value];
       return { ...prev, [key]: next };
     });
-    setPage(1);
+    setVisible(PER_PAGE);
   }
 
-  function clearAll() { setFilters(EMPTY); setPage(1); }
+  function clearAll() { setFilters(EMPTY); setVisible(PER_PAGE); }
 
   const activeCount = Object.values(filters).flat().length;
 
@@ -191,11 +190,12 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
     return list.length;
   }
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-  const paginated  = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const [visible, setVisible] = useState(PER_PAGE);
+  const paginated  = filtered.slice(0, visible);
+  const hasMore    = visible < filtered.length;
   const currentSort = SORT_OPTIONS.find(o => o.value === sort)!;
 
-  function goPage(n: number) { setPage(n); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  function loadMore() { setVisible(v => v + PER_PAGE); }
 
   const Sidebar = () => (
     <div>
@@ -272,7 +272,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                   {SORT_OPTIONS.map(opt => (
                     <button
                       key={opt.value}
-                      onClick={() => { setSort(opt.value); setSO(false); setPage(1); }}
+                      onClick={() => { setSort(opt.value); setSO(false); setVisible(PER_PAGE); }}
                       className={`w-full text-left px-4 py-2.5 text-sm transition-colors
                         ${sort === opt.value ? "bg-orange-50 text-orange-600 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}
                     >
@@ -405,37 +405,18 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
               </div>
             )}
 
-            {/* PAGINATION */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-10">
-                <button onClick={() => goPage(page-1)} disabled={page===1}
-                  className="w-9 h-9 rounded-lg flex items-center justify-center border border-gray-200 bg-white text-gray-500 hover:border-orange-300 hover:text-orange-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-                  <ChevronLeft className="w-4 h-4" />
+            {/* SHOW MORE */}
+            {hasMore && (
+              <div className="flex flex-col items-center gap-2 mt-10">
+                <button onClick={loadMore}
+                  className="px-8 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold transition-colors shadow-sm shadow-orange-200">
+                  Show More ({filtered.length - visible} remaining)
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => {
-                  if (totalPages > 7 && n !== 1 && n !== totalPages && (n < page-2 || n > page+2)) {
-                    if (n === page-3 || n === page+3)
-                      return <span key={n} className="w-9 h-9 flex items-center justify-center text-gray-400 text-sm">…</span>;
-                    return null;
-                  }
-                  return (
-                    <button key={n} onClick={() => goPage(n)}
-                      className={`w-9 h-9 rounded-lg text-sm font-semibold transition-colors
-                        ${n===page ? "bg-orange-500 text-white shadow-sm shadow-orange-200" : "border border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:text-orange-500"}`}>
-                      {n}
-                    </button>
-                  );
-                })}
-                <button onClick={() => goPage(page+1)} disabled={page===totalPages}
-                  className="w-9 h-9 rounded-lg flex items-center justify-center border border-gray-200 bg-white text-gray-500 hover:border-orange-300 hover:text-orange-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+                <p className="text-xs text-gray-400">Showing {visible} of {filtered.length} vehicles</p>
               </div>
             )}
-            {filtered.length > 0 && (
-              <p className="text-center text-xs text-gray-400 mt-3">
-                Page {page} of {totalPages} · Showing {(page-1)*PER_PAGE+1}–{Math.min(page*PER_PAGE, filtered.length)} of {filtered.length} vehicles
-              </p>
+            {!hasMore && filtered.length > 0 && (
+              <p className="text-center text-xs text-gray-400 mt-10">All {filtered.length} vehicles shown</p>
             )}
           </div>
         </div>
