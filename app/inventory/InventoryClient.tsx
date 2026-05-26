@@ -23,6 +23,7 @@ export type Vehicle = {
   body: string;
   img: string;
   badge?: string;
+  status?: string;
 };
 
 // ── CONSTANTS ─────────────────────────────────────────────────────────────
@@ -132,8 +133,9 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
   const [mobileOpen, setMO]   = useState(false);
   const [sortOpen, setSO]     = useState(false);
 
-  const MAKES  = useMemo(() => [...new Set(vehicles.map(v => v.make))].sort(), [vehicles]);
-  const BODIES = useMemo(() => [...new Set(vehicles.map(v => v.body))].sort(), [vehicles]);
+  const available = useMemo(() => vehicles.filter(v => v.status !== "sold"), [vehicles]);
+  const MAKES  = useMemo(() => [...new Set(available.map(v => v.make))].sort(), [available]);
+  const BODIES = useMemo(() => [...new Set(available.map(v => v.body))].sort(), [available]);
 
   function toggle(key: keyof Filters, value: string) {
     setFilters(prev => {
@@ -149,7 +151,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
   const activeCount = Object.values(filters).flat().length;
 
   const filtered = useMemo(() => {
-    let list = [...vehicles];
+    let list = [...available];
     if (filters.makes.length)
       list = list.filter(v => filters.makes.includes(v.make));
     if (filters.bodies.length)
@@ -173,12 +175,14 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
       if (sort === "miles-asc")  return a.miles - b.miles;
       return b.year - a.year;
     });
-    return list;
-  }, [vehicles, filters, sort]);
+    // sold cars always appear after available ones
+    const sold = vehicles.filter(v => v.status === "sold");
+    return [...list, ...sold];
+  }, [available, vehicles, filters, sort]);
 
   function getCount(key: keyof Filters, value: string): number {
     const mf = { ...filters, [key]: [...(filters[key] as string[]).filter(v => v !== value), value] };
-    let list = [...vehicles];
+    let list = [...available];
     if (mf.makes.length)       list = list.filter(v => mf.makes.includes(v.make));
     if (mf.bodies.length)      list = list.filter(v => mf.bodies.includes(v.body));
     if (mf.priceRanges.length) list = list.filter(v => mf.priceRanges.some(lbl => { const r = PRICE_RANGES.find(p=>p.label===lbl)!; return v.price>=r.min && v.price<r.max; }));
@@ -310,55 +314,92 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                     transition={{ delay: i * 0.05, duration:0.4, ease:[0.22,1,0.36,1] }}
                     className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                   >
-                    <Link href={`/inventory/${car.id}`} className="block">
-                      <div className="relative h-48 overflow-hidden bg-gray-900">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={car.img}
-                          alt={`${car.year} ${car.make} ${car.model}`}
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
-                        {car.badge && (
-                          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-orange-500 text-white text-xs font-bold z-10">
-                            {car.badge}
-                          </span>
-                        )}
-                        <span className="absolute top-3 right-3 px-3 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-sm font-bold z-10">
-                          {fmtPrice(car.price)}
-                        </span>
-                        <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-sm text-white text-xs font-semibold z-10">
-                          {car.body}
-                        </span>
-                      </div>
-                      <div className="p-4">
-                        <p className="text-xs text-gray-400 font-medium mb-0.5">{car.year}</p>
-                        <h3 className="font-bold text-gray-900 text-base leading-tight mb-3">{car.make} {car.model}</h3>
-                        <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
-                          <span>{fmt(car.miles)} mi</span>
-                          <span className="w-1 h-1 rounded-full bg-gray-200" />
-                          <span className="text-emerald-600 font-medium flex items-center gap-1">
-                            <Check className="w-3 h-3" strokeWidth={3} />
-                            Inspected
+                    {car.status === "sold" ? (
+                      /* ── SOLD CARD ─────────────────────────────── */
+                      <div className="opacity-75">
+                        <div className="relative h-48 overflow-hidden bg-gray-900">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={car.img}
+                            alt={`${car.year} ${car.make} ${car.model}`}
+                            className="absolute inset-0 w-full h-full object-cover grayscale"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-black/50" />
+                          <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <span className="px-5 py-2 rounded-xl bg-red-600 text-white text-2xl font-black tracking-widest uppercase shadow-lg rotate-[-8deg]">
+                              SOLD
+                            </span>
+                          </div>
+                          <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-sm text-white text-xs font-semibold z-10">
+                            {car.body}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xl font-bold text-gray-900">{fmtPrice(car.price)}</span>
-                          <span className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-100 group-hover:bg-orange-500 text-gray-600 group-hover:text-white text-xs font-bold transition-colors">
-                            Details
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </span>
+                        <div className="p-4">
+                          <p className="text-xs text-gray-400 font-medium mb-0.5">{car.year}</p>
+                          <h3 className="font-bold text-gray-500 text-base leading-tight mb-3">{car.make} {car.model}</h3>
+                          <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
+                            <span>{fmt(car.miles)} mi</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xl font-bold text-red-500">SOLD</span>
+                          </div>
                         </div>
                       </div>
-                    </Link>
-                    <div className="px-4 pb-4">
-                      <a href={`tel:${PHONE_TEL}`}
-                        className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg bg-orange-500 text-white text-xs font-bold hover:bg-orange-600 transition-colors">
-                        <Phone className="w-3.5 h-3.5" />
-                        Call About This Car
-                      </a>
-                    </div>
+                    ) : (
+                      /* ── AVAILABLE CARD ────────────────────────── */
+                      <>
+                        <Link href={`/inventory/${car.id}`} className="block">
+                          <div className="relative h-48 overflow-hidden bg-gray-900">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={car.img}
+                              alt={`${car.year} ${car.make} ${car.model}`}
+                              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              loading="lazy"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
+                            {car.badge && (
+                              <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-orange-500 text-white text-xs font-bold z-10">
+                                {car.badge}
+                              </span>
+                            )}
+                            <span className="absolute top-3 right-3 px-3 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-sm font-bold z-10">
+                              {fmtPrice(car.price)}
+                            </span>
+                            <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-sm text-white text-xs font-semibold z-10">
+                              {car.body}
+                            </span>
+                          </div>
+                          <div className="p-4">
+                            <p className="text-xs text-gray-400 font-medium mb-0.5">{car.year}</p>
+                            <h3 className="font-bold text-gray-900 text-base leading-tight mb-3">{car.make} {car.model}</h3>
+                            <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
+                              <span>{fmt(car.miles)} mi</span>
+                              <span className="w-1 h-1 rounded-full bg-gray-200" />
+                              <span className="text-emerald-600 font-medium flex items-center gap-1">
+                                <Check className="w-3 h-3" strokeWidth={3} />
+                                Inspected
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xl font-bold text-gray-900">{fmtPrice(car.price)}</span>
+                              <span className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-100 group-hover:bg-orange-500 text-gray-600 group-hover:text-white text-xs font-bold transition-colors">
+                                Details
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                        <div className="px-4 pb-4">
+                          <a href={`tel:${PHONE_TEL}`}
+                            className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg bg-orange-500 text-white text-xs font-bold hover:bg-orange-600 transition-colors">
+                            <Phone className="w-3.5 h-3.5" />
+                            Call About This Car
+                          </a>
+                        </div>
+                      </>
+                    )}
                   </motion.article>
                 ))}
               </div>

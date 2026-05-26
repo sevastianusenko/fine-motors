@@ -46,6 +46,26 @@ export default defineConfig({
                           .filter('_type == "vehicle" && status == "sold"')
                           .defaultOrdering([{ field: "soldDate", direction: "desc" }])
                       ),
+                    S.listItem()
+                      .title("📝  Drafts")
+                      .schemaType("vehicle")
+                      .child(
+                        S.documentList()
+                          .title("Drafts")
+                          .schemaType("vehicle")
+                          .filter('_type == "vehicle" && status == "draft"')
+                          .defaultOrdering([{ field: "_createdAt", direction: "desc" }])
+                      ),
+                    S.listItem()
+                      .title("🗑️  Deleted")
+                      .schemaType("vehicle")
+                      .child(
+                        S.documentList()
+                          .title("Deleted Vehicles")
+                          .schemaType("vehicle")
+                          .filter('_type == "vehicle" && status == "deleted"')
+                          .defaultOrdering([{ field: "_updatedAt", direction: "desc" }])
+                      ),
                     S.divider(),
                     S.listItem()
                       .title("📋  All Vehicles")

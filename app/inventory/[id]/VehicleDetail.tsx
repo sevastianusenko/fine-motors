@@ -101,8 +101,17 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
 
+        {/* SOLD overlay */}
+        {vehicle.status === "sold" && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+            <span className="px-10 py-4 rounded-2xl bg-red-600/90 text-white text-5xl font-black tracking-widest uppercase shadow-2xl rotate-[-8deg] select-none">
+              SOLD
+            </span>
+          </div>
+        )}
+
         {/* Badge */}
-        {vehicle.badge && (
+        {vehicle.badge && vehicle.status !== "sold" && (
           <span className="absolute top-5 left-5 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-sm font-bold">
             {vehicle.badge}
           </span>
@@ -147,10 +156,16 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                   {vehicle.make} {vehicle.model}
                 </h1>
               </div>
-              <div className="text-right shrink-0">
-                <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-0.5">Asking Price</p>
-                <p className="text-3xl sm:text-4xl font-black text-orange-400">{fmtPrice(vehicle.price)}</p>
-              </div>
+              {vehicle.status === "sold" ? (
+                <div className="text-right shrink-0">
+                  <p className="text-3xl sm:text-4xl font-black text-red-400">SOLD</p>
+                </div>
+              ) : (
+                <div className="text-right shrink-0">
+                  <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-0.5">Asking Price</p>
+                  <p className="text-3xl sm:text-4xl font-black text-orange-400">{fmtPrice(vehicle.price)}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

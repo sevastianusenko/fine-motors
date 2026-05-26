@@ -63,15 +63,16 @@ export default async function InventoryPage() {
       const raw: any[] = await client.fetch(VEHICLES_QUERY, {}, { next: { revalidate: 60 } });
       if (Array.isArray(raw) && raw.length > 0) {
         vehicles = raw.map(v => ({
-          id:    v._id,
-          year:  v.year,
-          make:  v.make,
-          model: v.model,
-          price: v.price,
-          miles: v.miles,
-          body:  v.body  ?? "SUV",
-          img:   v.img   ?? IMGS[0],
-          badge: v.badge ?? undefined,
+          id:     v._id,
+          year:   v.year,
+          make:   v.make,
+          model:  v.model,
+          price:  v.price,
+          miles:  v.miles,
+          body:   v.body   ?? "SUV",
+          img:    v.img    ?? IMGS[0],
+          badge:  v.badge  ?? undefined,
+          status: v.status ?? "available",
         }));
       }
     } catch (err) {

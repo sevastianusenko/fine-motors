@@ -18,7 +18,7 @@ export default async function VehiclePage({ params }: { params: Promise<{ id: st
     ]);
   }
 
-  if (!vehicle) notFound();
+  if (!vehicle || vehicle.status === "deleted" || vehicle.status === "draft") notFound();
 
   return <VehicleDetail vehicle={vehicle} more={more} />;
 }

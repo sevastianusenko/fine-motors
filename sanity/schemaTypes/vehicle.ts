@@ -114,11 +114,13 @@ export const vehicleType = defineType({
       name:         "status",
       title:        "Status",
       type:         "string",
-      description:  "Available = shown on website. Sold = hidden from website.",
+      description:  "Available = on website with price. Sold = on website as SOLD. Deleted = hidden (kept in records). Draft = not published.",
       options: {
         list: [
-          { title: "✅  Available — show on website", value: "available" },
-          { title: "🔴  Sold — hide from website",    value: "sold"      },
+          { title: "✅  Available — show on website with price", value: "available" },
+          { title: "🔴  Sold — show on website as SOLD",        value: "sold"      },
+          { title: "🗑️  Deleted — hidden from website",         value: "deleted"   },
+          { title: "📝  Draft — not published yet",             value: "draft"     },
         ],
         layout: "radio",
       },

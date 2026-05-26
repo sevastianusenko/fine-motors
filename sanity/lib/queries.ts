@@ -8,10 +8,10 @@ export const FEATURED_QUERY = groq`
   }
 `;
 
-// Full inventory list
+// Full inventory list (available + sold, not deleted/draft)
 export const VEHICLES_QUERY = groq`
-  *[_type == "vehicle" && status == "available"] | order(_createdAt desc) {
-    _id, make, model, year, price, miles, body, badge,
+  *[_type == "vehicle" && (status == "available" || status == "sold")] | order(_createdAt desc) {
+    _id, make, model, year, price, miles, body, badge, status,
     "img": mainImage.asset->url,
   }
 `;
