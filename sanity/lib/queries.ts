@@ -2,7 +2,7 @@ import { groq } from "next-sanity";
 
 // Last 4 for home page hero
 export const FEATURED_QUERY = groq`
-  *[_type == "vehicle" && status == "available"] | order(_createdAt desc) [0...4] {
+  *[_type == "vehicle" && (status == "available" || status == "pending")] | order(_createdAt desc) [0...4] {
     _id, make, model, year, price, miles, body, badge,
     "img": mainImage.asset->url,
   }
@@ -10,7 +10,7 @@ export const FEATURED_QUERY = groq`
 
 // Full inventory list (available + sold, not deleted/draft)
 export const VEHICLES_QUERY = groq`
-  *[_type == "vehicle" && (status == "available" || status == "sold")] | order(_createdAt desc) {
+  *[_type == "vehicle" && (status == "available" || status == "pending" || status == "sold")] | order(_createdAt desc) {
     _id, make, model, year, price, miles, body, badge, status,
     "img": mainImage.asset->url,
   }
