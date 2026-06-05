@@ -114,13 +114,14 @@ export const vehicleType = defineType({
       name:         "status",
       title:        "Status",
       type:         "string",
-      description:  "Available = on website with price. Sold = on website as SOLD. Deleted = hidden (kept in records). Draft = not published.",
+      description:  "Available = on website with price. Pending = on website, marked as Sale Pending. Sold = on website as SOLD. Deleted = hidden (kept in records). Draft = not published.",
       options: {
         list: [
-          { title: "✅  Available — show on website with price", value: "available" },
-          { title: "🔴  Sold — show on website as SOLD",        value: "sold"      },
-          { title: "🗑️  Deleted — hidden from website",         value: "deleted"   },
-          { title: "📝  Draft — not published yet",             value: "draft"     },
+          { title: "✅  Available — show on website with price",         value: "available" },
+          { title: "🟡  Pending — show on website as Sale Pending",      value: "pending"   },
+          { title: "🔴  Sold — show on website as SOLD",                 value: "sold"      },
+          { title: "🗑️  Deleted — hidden from website",                  value: "deleted"   },
+          { title: "📝  Draft — not published yet",                      value: "draft"     },
         ],
         layout: "radio",
       },
@@ -543,7 +544,7 @@ export const vehicleType = defineType({
       stockNumber:   "stockNumber",
     },
     prepare({ make, model, year, price, status, media, purchasePrice, soldPrice, soldDate, stockNumber }) {
-      const icon  = status === "sold" ? "🔴" : "✅";
+      const icon  = status === "sold" ? "🔴" : status === "pending" ? "🟡" : "✅";
       const p     = price ? `$${Number(price).toLocaleString("en-US")}` : "—";
       const stock = stockNumber ? `  ·  #${stockNumber}` : "";
 
@@ -556,7 +557,7 @@ export const vehicleType = defineType({
 
       return {
         title:    `${year ?? ""} ${make ?? ""} ${model ?? ""}`.trim() || "New Vehicle",
-        subtitle: `${p}${stock}  ·  ${icon} ${status === "sold" ? "Sold" : "Available"}${extra}`,
+        subtitle: `${p}${stock}  ·  ${icon} ${status === "sold" ? "Sold" : status === "pending" ? "Pending" : "Available"}${extra}`,
         media,
       };
     },

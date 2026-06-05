@@ -110,6 +110,16 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
           </div>
         )}
 
+        {/* PENDING overlay */}
+        {vehicle.status === "pending" && (
+          <div className="absolute top-5 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+            <span className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500/95 text-white text-lg font-black tracking-wide uppercase shadow-xl select-none">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              Sale Pending
+            </span>
+          </div>
+        )}
+
         {/* Badge */}
         {vehicle.badge && vehicle.status !== "sold" && (
           <span className="absolute top-5 left-5 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-sm font-bold">
@@ -328,7 +338,42 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
 
               {/* Price card */}
               <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-                {vehicle.status === "sold" ? (
+                {vehicle.status === "pending" ? (
+                  <>
+                    <div className="bg-gray-900 px-6 py-5">
+                      <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Asking Price</p>
+                      <p className="text-4xl font-black text-orange-400">{fmtPrice(vehicle.price)}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                        <span className="text-amber-400 text-xs font-semibold">Sale Pending</span>
+                      </div>
+                    </div>
+                    <div className="p-5 space-y-3">
+                      <div className="flex items-start gap-3 py-3 px-4 rounded-xl bg-amber-50 border border-amber-200">
+                        <span className="text-amber-500 text-lg leading-none mt-0.5">⏳</span>
+                        <div>
+                          <p className="text-amber-800 font-bold text-sm">Sale Pending</p>
+                          <p className="text-amber-700 text-xs mt-0.5 leading-relaxed">Someone is already working on buying this car. Call us — it may still be available.</p>
+                        </div>
+                      </div>
+                      <a href={`tel:${PHONE_TEL}`}
+                        className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors">
+                        <Phone className="w-4.5 h-4.5" />
+                        Call {PHONE}
+                      </a>
+                      <a href={`mailto:${EMAIL}?subject=Interested in ${vehicle.year} ${vehicle.make} ${vehicle.model} (Pending)`}
+                        className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border-2 border-gray-200 text-gray-700 font-bold hover:border-orange-300 hover:text-orange-600 transition-all">
+                        <Mail className="w-4.5 h-4.5" />
+                        Send Email
+                      </a>
+                      <a href={MAPS_URL} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-gray-500 text-sm font-semibold hover:text-orange-500 transition-colors">
+                        <MapPin className="w-4 h-4" />
+                        Get Directions
+                      </a>
+                    </div>
+                  </>
+                ) : vehicle.status === "sold" ? (
                   <>
                     <div className="bg-gray-800 px-6 py-5">
                       <p className="text-white/40 text-xs font-semibold uppercase tracking-wide mb-1">Was Listed At</p>
