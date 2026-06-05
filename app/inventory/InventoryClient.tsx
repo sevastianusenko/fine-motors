@@ -346,7 +346,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-base font-bold text-red-500">SOLD</span>
-                            <span className="text-xs text-gray-400 underline">View details →</span>
+                            <span className="text-base font-semibold text-gray-300 line-through">{fmtPrice(car.price)}</span>
                           </div>
                         </div>
                       </Link>
