@@ -2,6 +2,7 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool }    from "@sanity/vision";
 import { schemaTypes }   from "./sanity/schemaTypes";
+import { Dashboard }     from "./sanity/components/Dashboard";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
 const dataset   = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
@@ -34,6 +35,16 @@ export default defineConfig({
                           .title("Available Cars")
                           .schemaType("vehicle")
                           .filter('_type == "vehicle" && status == "available"')
+                          .defaultOrdering([{ field: "_createdAt", direction: "desc" }])
+                      ),
+                    S.listItem()
+                      .title("🟡  Sale Pending")
+                      .schemaType("vehicle")
+                      .child(
+                        S.documentList()
+                          .title("Sale Pending")
+                          .schemaType("vehicle")
+                          .filter('_type == "vehicle" && status == "pending"')
                           .defaultOrdering([{ field: "_createdAt", direction: "desc" }])
                       ),
                     S.listItem()
@@ -170,6 +181,12 @@ export default defineConfig({
     }),
 
     visionTool(),
+    {
+      name:      "dashboard",
+      title:     "Dashboard",
+      icon:      () => "📊",
+      component: Dashboard,
+    },
   ],
 
   schema: { types: schemaTypes },
