@@ -328,32 +328,61 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
 
               {/* Price card */}
               <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-                <div className="bg-gray-900 px-6 py-5">
-                  <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Asking Price</p>
-                  <p className="text-4xl font-black text-orange-400">{fmtPrice(vehicle.price)}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-emerald-400 text-xs font-semibold">Available</span>
-                  </div>
-                </div>
-
-                <div className="p-5 space-y-3">
-                  <a href={`tel:${PHONE_TEL}`}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors">
-                    <Phone className="w-4.5 h-4.5" />
-                    Call {PHONE}
-                  </a>
-                  <a href={`mailto:${EMAIL}?subject=Interested in ${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border-2 border-gray-200 text-gray-700 font-bold hover:border-orange-300 hover:text-orange-600 transition-all">
-                    <Mail className="w-4.5 h-4.5" />
-                    Send Email
-                  </a>
-                  <a href={MAPS_URL} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-gray-500 text-sm font-semibold hover:text-orange-500 transition-colors">
-                    <MapPin className="w-4 h-4" />
-                    Get Directions
-                  </a>
-                </div>
+                {vehicle.status === "sold" ? (
+                  <>
+                    <div className="bg-gray-800 px-6 py-5">
+                      <p className="text-white/40 text-xs font-semibold uppercase tracking-wide mb-1">Was Listed At</p>
+                      <p className="text-4xl font-black text-white/40 line-through">{fmtPrice(vehicle.price)}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="w-2 h-2 rounded-full bg-red-400" />
+                        <span className="text-red-400 text-xs font-semibold uppercase tracking-wide">This vehicle has been sold</span>
+                      </div>
+                    </div>
+                    <div className="p-5 space-y-3">
+                      <div className="text-center py-3 px-4 rounded-xl bg-red-50 border border-red-100">
+                        <p className="text-red-600 font-bold text-sm">This car is no longer available</p>
+                        <p className="text-gray-500 text-xs mt-1">Looking for something similar?</p>
+                      </div>
+                      <a href={`tel:${PHONE_TEL}`}
+                        className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors">
+                        <Phone className="w-4.5 h-4.5" />
+                        Call {PHONE}
+                      </a>
+                      <a href="/inventory"
+                        className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border-2 border-gray-200 text-gray-700 font-bold hover:border-orange-300 hover:text-orange-600 transition-all">
+                        View Available Cars
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-gray-900 px-6 py-5">
+                      <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Asking Price</p>
+                      <p className="text-4xl font-black text-orange-400">{fmtPrice(vehicle.price)}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-emerald-400 text-xs font-semibold">Available</span>
+                      </div>
+                    </div>
+                    <div className="p-5 space-y-3">
+                      <a href={`tel:${PHONE_TEL}`}
+                        className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors">
+                        <Phone className="w-4.5 h-4.5" />
+                        Call {PHONE}
+                      </a>
+                      <a href={`mailto:${EMAIL}?subject=Interested in ${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                        className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border-2 border-gray-200 text-gray-700 font-bold hover:border-orange-300 hover:text-orange-600 transition-all">
+                        <Mail className="w-4.5 h-4.5" />
+                        Send Email
+                      </a>
+                      <a href={MAPS_URL} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-gray-500 text-sm font-semibold hover:text-orange-500 transition-colors">
+                        <MapPin className="w-4 h-4" />
+                        Get Directions
+                      </a>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Hours */}

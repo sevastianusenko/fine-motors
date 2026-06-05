@@ -316,7 +316,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                   >
                     {car.status === "sold" ? (
                       /* ── SOLD CARD ─────────────────────────────── */
-                      <div className="opacity-75">
+                      <Link href={`/inventory/${car.id}`} className="block opacity-80 hover:opacity-100 transition-opacity">
                         <div className="relative h-48 overflow-hidden bg-gray-900">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -334,6 +334,9 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                           <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-sm text-white text-xs font-semibold z-10">
                             {car.body}
                           </span>
+                          <span className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/40 backdrop-blur-sm text-white/60 text-sm font-bold line-through z-10">
+                            {fmtPrice(car.price)}
+                          </span>
                         </div>
                         <div className="p-4">
                           <p className="text-xs text-gray-400 font-medium mb-0.5">{car.year}</p>
@@ -342,10 +345,11 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                             <span>{fmt(car.miles)} mi</span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-xl font-bold text-red-500">SOLD</span>
+                            <span className="text-base font-bold text-red-500">SOLD</span>
+                            <span className="text-xs text-gray-400 underline">View details →</span>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     ) : (
                       /* ── AVAILABLE CARD ────────────────────────── */
                       <>
