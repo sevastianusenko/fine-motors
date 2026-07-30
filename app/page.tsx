@@ -27,6 +27,7 @@ export default async function HomePage() {
           miles: v.miles,
           badge: v.badge,
           img:   v.img ?? undefined,
+          kbbValue: v.kbbValue ?? undefined,
         }));
       }
     } catch (e) {

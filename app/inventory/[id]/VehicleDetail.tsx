@@ -343,6 +343,15 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                     <div className="bg-gray-900 px-6 py-5">
                       <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Asking Price</p>
                       <p className="text-4xl font-black text-orange-400">{fmtPrice(vehicle.price)}</p>
+                      {!!vehicle.kbbValue && (
+                        <p className="mt-2 text-xs flex items-center gap-1.5 flex-wrap">
+                          <span className="px-1.5 py-0.5 rounded bg-blue-500 text-white font-black tracking-wide">KBB</span>
+                          <span className="text-white/70 font-semibold">Valued at {fmtPrice(vehicle.kbbValue)}</span>
+                          {vehicle.kbbValue > vehicle.price && (
+                            <span className="text-emerald-400 font-bold">· {fmtPrice(vehicle.kbbValue - vehicle.price)} below KBB</span>
+                          )}
+                        </p>
+                      )}
                       <div className="flex items-center gap-2 mt-2">
                         <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
                         <span className="text-amber-400 text-xs font-semibold">Sale Pending</span>
@@ -404,6 +413,15 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                     <div className="bg-gray-900 px-6 py-5">
                       <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Asking Price</p>
                       <p className="text-4xl font-black text-orange-400">{fmtPrice(vehicle.price)}</p>
+                      {!!vehicle.kbbValue && (
+                        <p className="mt-2 text-xs flex items-center gap-1.5 flex-wrap">
+                          <span className="px-1.5 py-0.5 rounded bg-blue-500 text-white font-black tracking-wide">KBB</span>
+                          <span className="text-white/70 font-semibold">Valued at {fmtPrice(vehicle.kbbValue)}</span>
+                          {vehicle.kbbValue > vehicle.price && (
+                            <span className="text-emerald-400 font-bold">· {fmtPrice(vehicle.kbbValue - vehicle.price)} below KBB</span>
+                          )}
+                        </p>
+                      )}
                       <div className="flex items-center gap-2 mt-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                         <span className="text-emerald-400 text-xs font-semibold">Available</span>

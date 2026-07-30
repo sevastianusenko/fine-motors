@@ -24,6 +24,7 @@ export type Vehicle = {
   img: string;
   badge?: string;
   status?: string;
+  kbbValue?: number;
 };
 
 // ── CONSTANTS ─────────────────────────────────────────────────────────────
@@ -336,6 +337,11 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                           <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-sm text-white text-xs font-semibold z-10">
                             {car.body}
                           </span>
+                          {!!car.kbbValue && (
+                            <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-blue-600/90 backdrop-blur-sm text-white text-xs font-bold z-10">
+                              KBB {fmtPrice(car.kbbValue)}
+                            </span>
+                          )}
                         </div>
                         <div className="p-4">
                           <p className="text-xs text-gray-400 font-medium mb-0.5">{car.year}</p>
@@ -417,6 +423,11 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                             <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded-md bg-white/15 backdrop-blur-sm text-white text-xs font-semibold z-10">
                               {car.body}
                             </span>
+                            {!!car.kbbValue && (
+                              <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-blue-600/90 backdrop-blur-sm text-white text-xs font-bold z-10">
+                                KBB {fmtPrice(car.kbbValue)}
+                              </span>
+                            )}
                           </div>
                           <div className="p-4">
                             <p className="text-xs text-gray-400 font-medium mb-0.5">{car.year}</p>

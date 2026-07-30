@@ -185,6 +185,15 @@ export const vehicleType = defineType({
     }),
 
     defineField({
+      name:        "kbbValue",
+      title:       "KBB Value (USD) — optional",
+      type:        "number",
+      description: "Kelley Blue Book value if you know it. Adds a small blue \"KBB\" tag on the website. Leave empty — no tag is shown.",
+      validation:  (R) => R.positive().integer(),
+      group:       "listing",
+    }),
+
+    defineField({
       name:        "miles",
       title:       "Mileage (miles)",
       type:        "number",

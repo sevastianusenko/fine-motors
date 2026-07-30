@@ -73,6 +73,7 @@ export default async function InventoryPage() {
           img:    v.img    ?? IMGS[0],
           badge:  v.badge  ?? undefined,
           status: v.status ?? "available",
+          kbbValue: v.kbbValue ?? undefined,
         }));
       }
     } catch (err) {

@@ -21,6 +21,7 @@ export type FeaturedVehicle = {
   miles: number;
   badge?: string;
   img?: string;
+  kbbValue?: number;
 };
 
 // ── CONSTANTS ─────────────────────────────────────────────────────────────
@@ -435,6 +436,11 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
                     <span className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm text-white text-sm font-bold z-10">
                       {fmtPrice(car.price)}
                     </span>
+                    {!!car.kbbValue && (
+                      <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-blue-600/90 backdrop-blur-sm text-white text-xs font-bold z-10">
+                        KBB {fmtPrice(car.kbbValue)}
+                      </span>
+                    )}
                   </div>
                   <div className="p-4">
                     <div className="text-xs text-gray-400 font-medium mb-0.5">{car.year}</div>
