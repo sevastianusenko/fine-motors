@@ -74,6 +74,9 @@ export default async function InventoryPage() {
           badge:  v.badge  ?? undefined,
           status: v.status ?? "available",
           kbbValue: v.kbbValue ?? undefined,
+          fuel:      v.fuel ?? undefined,
+          brandNew:  v.brandNew ?? false,
+          createdAt: v._createdAt ?? undefined,
         }));
       }
     } catch (err) {

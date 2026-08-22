@@ -28,6 +28,8 @@ export default async function HomePage() {
           badge: v.badge,
           img:   v.img ?? undefined,
           kbbValue: v.kbbValue ?? undefined,
+          fuel:     v.fuel ?? undefined,
+          brandNew: v.brandNew ?? false,
         }));
       }
     } catch (e) {

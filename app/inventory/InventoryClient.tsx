@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Car, Phone,
+  Car, Phone, Leaf,
   SlidersHorizontal, X, Check, ChevronDown, ArrowRight,
 } from "lucide-react";
 import { NavBar } from "@/app/components/NavBar";
@@ -25,6 +25,9 @@ export type Vehicle = {
   badge?: string;
   status?: string;
   kbbValue?: number;
+  fuel?: string;
+  brandNew?: boolean;
+  createdAt?: string;
 };
 
 // ── CONSTANTS ─────────────────────────────────────────────────────────────
@@ -53,7 +56,8 @@ const MILE_RANGES = [
   { label: "90k+",      min: 90000, max: Infinity },
 ];
 const SORT_OPTIONS = [
-  { value: "year-desc",  label: "Newest First"         },
+  { value: "added-desc", label: "Recently Added"       },
+  { value: "year-desc",  label: "Year: Newest First"   },
   { value: "price-asc",  label: "Price: Low to High"   },
   { value: "price-desc", label: "Price: High to Low"   },
   { value: "miles-asc",  label: "Mileage: Low to High" },
@@ -64,14 +68,48 @@ const SORT_OPTIONS = [
 
 function fmt(n: number)      { return new Intl.NumberFormat("en-US").format(n); }
 function fmtPrice(n: number) { return "$" + fmt(n); }
+function isHybrid(fuel?: string) { return fuel === "Hybrid" || fuel === "Plug-in Hybrid"; }
+
+// ── CARD TAGS ─────────────────────────────────────────────────────────────
+// Stacked in the photo's top-left corner: Brand New, manual badge, Hybrid.
+
+function CardTags({ car, showBadge = true, lead }: {
+  car: Vehicle; showBadge?: boolean; lead?: ReactNode;
+}) {
+  const hybrid   = isHybrid(car.fuel);
+  const brandNew = car.brandNew || car.badge === "Brand New";
+  const badge    = car.badge === "Brand New" ? undefined : car.badge;
+  if (!lead && !brandNew && !hybrid && !(showBadge && badge)) return null;
+  return (
+    <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-1.5">
+      {lead}
+      {brandNew && (
+        <span className="px-3.5 py-1.5 rounded-lg bg-emerald-500 text-white text-sm font-black uppercase tracking-wide shadow-lg shadow-emerald-900/30">
+          Brand New
+        </span>
+      )}
+      {showBadge && badge && (
+        <span className="px-2.5 py-1 rounded-md bg-orange-500 text-white text-xs font-bold">
+          {badge}
+        </span>
+      )}
+      {hybrid && (
+        <span className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-teal-600 text-white text-xs font-bold">
+          <Leaf className="w-3 h-3" strokeWidth={2.5} />
+          HYBRID
+        </span>
+      )}
+    </div>
+  );
+}
 
 // ── FILTER STATE ──────────────────────────────────────────────────────────
 
 type Filters = {
   makes: string[]; priceRanges: string[]; yearRanges: string[];
-  mileRanges: string[]; bodies: string[];
+  mileRanges: string[]; bodies: string[]; fuels: string[];
 };
-const EMPTY: Filters = { makes:[], priceRanges:[], yearRanges:[], mileRanges:[], bodies:[] };
+const EMPTY: Filters = { makes:[], priceRanges:[], yearRanges:[], mileRanges:[], bodies:[], fuels:[] };
 
 // ── FILTER GROUP ──────────────────────────────────────────────────────────
 
@@ -129,13 +167,17 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
       priceRanges: price ? [price] : [],
     };
   });
-  const [sort, setSort]       = useState("year-desc");
+  const [sort, setSort]       = useState("added-desc");
   const [mobileOpen, setMO]   = useState(false);
   const [sortOpen, setSO]     = useState(false);
 
   const available = useMemo(() => vehicles.filter(v => v.status !== "sold"), [vehicles]);
   const MAKES  = useMemo(() => [...new Set(available.map(v => v.make))].sort(), [available]);
   const BODIES = useMemo(() => [...new Set(available.map(v => v.body))].sort(), [available]);
+  const FUELS  = useMemo(
+    () => [...new Set(available.map(v => v.fuel).filter((f): f is string => !!f))].sort(),
+    [available],
+  );
 
   function toggle(key: keyof Filters, value: string) {
     setFilters(prev => {
@@ -168,12 +210,16 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
       list = list.filter(v =>
         filters.mileRanges.some(lbl => { const r = MILE_RANGES.find(m => m.label === lbl)!; return v.miles >= r.min && v.miles < r.max; })
       );
+    if (filters.fuels.length)
+      list = list.filter(v => !!v.fuel && filters.fuels.includes(v.fuel));
     list.sort((a, b) => {
       if (sort === "price-asc")  return a.price - b.price;
       if (sort === "price-desc") return b.price - a.price;
       if (sort === "year-asc")   return a.year  - b.year;
       if (sort === "miles-asc")  return a.miles - b.miles;
-      return b.year - a.year;
+      if (sort === "year-desc")  return b.year  - a.year;
+      // "added-desc" — newest listing first, the order Sanity already returns
+      return (b.createdAt ?? "").localeCompare(a.createdAt ?? "");
     });
     // sold cars always appear after available ones
     const sold = vehicles.filter(v => v.status === "sold");
@@ -188,6 +234,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
     if (mf.priceRanges.length) list = list.filter(v => mf.priceRanges.some(lbl => { const r = PRICE_RANGES.find(p=>p.label===lbl)!; return v.price>=r.min && v.price<r.max; }));
     if (mf.yearRanges.length)  list = list.filter(v => mf.yearRanges.some(lbl => { const r = YEAR_RANGES.find(y=>y.label===lbl)!; return v.year>=r.min && v.year<=r.max; }));
     if (mf.mileRanges.length)  list = list.filter(v => mf.mileRanges.some(lbl => { const r = MILE_RANGES.find(m=>m.label===lbl)!; return v.miles>=r.min && v.miles<r.max; }));
+    if (mf.fuels.length)       list = list.filter(v => !!v.fuel && mf.fuels.includes(v.fuel));
     return list.length;
   }
 
@@ -213,6 +260,9 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
       <FilterGroup title="Year"       options={YEAR_RANGES.map(y=>y.label)}  selected={filters.yearRanges}  onToggle={v=>toggle("yearRanges",v)}  getCounts={v=>getCount("yearRanges",v)} />
       <FilterGroup title="Mileage"    options={MILE_RANGES.map(m=>m.label)}  selected={filters.mileRanges}  onToggle={v=>toggle("mileRanges",v)}  getCounts={v=>getCount("mileRanges",v)} />
       <FilterGroup title="Body Type"  options={BODIES}                    selected={filters.bodies}      onToggle={v=>toggle("bodies",v)}      getCounts={v=>getCount("bodies",v)} />
+      {FUELS.length > 0 && (
+        <FilterGroup title="Fuel Type" options={FUELS}                    selected={filters.fuels}       onToggle={v=>toggle("fuels",v)}       getCounts={v=>getCount("fuels",v)} />
+      )}
     </div>
   );
 
@@ -327,10 +377,12 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                             loading="lazy"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
-                          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-amber-500 text-white text-xs font-bold z-10 flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse inline-block" />
-                            Sale Pending
-                          </span>
+                          <CardTags car={car} showBadge={false} lead={
+                            <span className="px-2.5 py-1 rounded-md bg-amber-500 text-white text-xs font-bold flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse inline-block" />
+                              Sale Pending
+                            </span>
+                          } />
                           <span className="absolute top-3 right-3 px-3 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-sm font-bold z-10">
                             {fmtPrice(car.price)}
                           </span>
@@ -412,11 +464,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                               loading="lazy"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
-                            {car.badge && (
-                              <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-orange-500 text-white text-xs font-bold z-10">
-                                {car.badge}
-                              </span>
-                            )}
+                            <CardTags car={car} />
                             <span className="absolute top-3 right-3 px-3 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-sm font-bold z-10">
                               {fmtPrice(car.price)}
                             </span>

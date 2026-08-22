@@ -4,7 +4,7 @@ import { motion, useInView, MotionConfig } from "framer-motion";
 import { useRef, useState, useMemo } from "react";
 import {
   Phone, Star, Car, ShieldCheck, Users, ArrowRight,
-  CheckCircle, MapPin, Mail, Clock,
+  CheckCircle, MapPin, Mail, Clock, Leaf,
 } from "lucide-react";
 import { NavBar } from "./components/NavBar";
 import { Footer } from "@/app/components/Footer";
@@ -22,6 +22,8 @@ export type FeaturedVehicle = {
   badge?: string;
   img?: string;
   kbbValue?: number;
+  fuel?: string;
+  brandNew?: boolean;
 };
 
 // ── CONSTANTS ─────────────────────────────────────────────────────────────
@@ -428,11 +430,24 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                    {car.badge && (
-                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-orange-500 text-white text-xs font-bold z-10">
-                        {car.badge}
-                      </span>
-                    )}
+                    <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-1.5">
+                      {(car.brandNew || car.badge === "Brand New") && (
+                        <span className="px-3.5 py-1.5 rounded-lg bg-emerald-500 text-white text-sm font-black uppercase tracking-wide shadow-lg shadow-emerald-900/30">
+                          Brand New
+                        </span>
+                      )}
+                      {car.badge && car.badge !== "Brand New" && (
+                        <span className="px-2.5 py-1 rounded-md bg-orange-500 text-white text-xs font-bold">
+                          {car.badge}
+                        </span>
+                      )}
+                      {(car.fuel === "Hybrid" || car.fuel === "Plug-in Hybrid") && (
+                        <span className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-teal-600 text-white text-xs font-bold">
+                          <Leaf className="w-3 h-3" strokeWidth={2.5} />
+                          HYBRID
+                        </span>
+                      )}
+                    </div>
                     <span className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm text-white text-sm font-bold z-10">
                       {fmtPrice(car.price)}
                     </span>

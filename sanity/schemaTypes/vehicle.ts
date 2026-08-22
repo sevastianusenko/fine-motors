@@ -209,6 +209,7 @@ export const vehicleType = defineType({
       description: "Small highlighted label shown on the vehicle photo card.",
       options: {
         list: [
+          { title: "🆕  Brand New",   value: "Brand New"   },
           { title: "⭐  Best Value",  value: "Best Value"  },
           { title: "🔥  Popular",     value: "Popular"     },
           { title: "📉  Low Miles",   value: "Low Miles"   },
@@ -217,6 +218,15 @@ export const vehicleType = defineType({
         ],
       },
       group: "listing",
+    }),
+
+    defineField({
+      name:         "brandNew",
+      title:        "Brand New Vehicle",
+      type:         "boolean",
+      description:  "Turn on for a never-titled, brand new car. Adds the big green \"BRAND NEW\" tag on the website — same as picking \"Brand New\" in Badge Label above.",
+      initialValue: false,
+      group:        "listing",
     }),
 
     // ════════════════════════════════════════════════════════════════

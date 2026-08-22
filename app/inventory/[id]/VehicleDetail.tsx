@@ -7,7 +7,7 @@ import {
   Car, Phone, MapPin, ChevronLeft, CheckCircle,
   Gauge, Calendar, LayoutGrid, Star, Shield,
   ChevronLeft as Prev, ChevronRight as Next, Mail,
-  Fuel, Zap, Settings2, Palette, X as Close, Maximize2,
+  Fuel, Zap, Settings2, Palette, X as Close, Maximize2, Leaf,
 } from "lucide-react";
 import { NavBar } from "@/app/components/NavBar";
 import { Footer } from "@/app/components/Footer";
@@ -120,11 +120,26 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
           </div>
         )}
 
-        {/* Badge */}
-        {vehicle.badge && vehicle.status !== "sold" && (
-          <span className="absolute top-5 left-5 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-sm font-bold">
-            {vehicle.badge}
-          </span>
+        {/* Tags — Brand New / badge / Hybrid */}
+        {vehicle.status !== "sold" && (
+          <div className="absolute top-5 left-5 z-10 flex flex-col items-start gap-2">
+            {(vehicle.brandNew || vehicle.badge === "Brand New") && (
+              <span className="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-lg sm:text-xl font-black uppercase tracking-wide shadow-xl shadow-emerald-900/30">
+                Brand New
+              </span>
+            )}
+            {vehicle.badge && vehicle.badge !== "Brand New" && (
+              <span className="px-3 py-1.5 rounded-lg bg-orange-500 text-white text-sm font-bold">
+                {vehicle.badge}
+              </span>
+            )}
+            {(vehicle.fuel === "Hybrid" || vehicle.fuel === "Plug-in Hybrid") && (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-600 text-white text-sm font-bold">
+                <Leaf className="w-4 h-4" strokeWidth={2.5} />
+                HYBRID
+              </span>
+            )}
+          </div>
         )}
 
         {/* View all photos button */}
@@ -523,11 +538,24 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                      {car.badge && (
-                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-orange-500 text-white text-[11px] font-bold">
-                          {car.badge}
-                        </span>
-                      )}
+                      <div className="absolute top-2 left-2 z-10 flex flex-col items-start gap-1">
+                        {(car.brandNew || car.badge === "Brand New") && (
+                          <span className="px-3 py-1 rounded-lg bg-emerald-500 text-white text-xs font-black uppercase tracking-wide shadow-lg shadow-emerald-900/30">
+                            Brand New
+                          </span>
+                        )}
+                        {car.badge && car.badge !== "Brand New" && (
+                          <span className="px-2 py-0.5 rounded-md bg-orange-500 text-white text-[11px] font-bold">
+                            {car.badge}
+                          </span>
+                        )}
+                        {(car.fuel === "Hybrid" || car.fuel === "Plug-in Hybrid") && (
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-teal-600 text-white text-[11px] font-bold">
+                            <Leaf className="w-3 h-3" strokeWidth={2.5} />
+                            HYBRID
+                          </span>
+                        )}
+                      </div>
                       <span className="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/50 backdrop-blur-sm text-white text-sm font-bold">
                         ${Number(car.price).toLocaleString("en-US")}
                       </span>
