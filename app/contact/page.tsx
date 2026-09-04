@@ -29,7 +29,7 @@ const HOURS = [
 const TRUST_STATS = [
   { icon: Star,       value: "5.0★",  label: "Google Rating",    sub: "25+ verified reviews"         },
   { icon: BadgeCheck, value: "15+",   label: "Years in Business", sub: "Serving Lebanon County"       },
-  { icon: Users,      value: "500+",  label: "Happy Customers",   sub: "And counting"                 },
+  { icon: Users,      value: "100+",  label: "Happy Customers",   sub: "And counting"                 },
   { icon: ShieldCheck,value: "$0",    label: "Hidden Fees",       sub: "Price you see = price you pay" },
 ];
 

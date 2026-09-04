@@ -33,6 +33,7 @@ const BUSINESS = {
   yearsInBusiness: 15,
   rating: 5.0,
   reviewCount: 25,
+  happyCustomers: 100,
   address: { street: "3910 Stiegel Pike", city: "Newmanstown", state: "PA", zip: "17073" },
   phone: "(717) 644-5444",
   phoneHref: "+17176445444",
@@ -48,7 +49,7 @@ const BUSINESS = {
 const STATS = [
   { value: `${BUSINESS.yearsInBusiness}+`, label: "Years Local"      },
   { value: `${BUSINESS.rating.toFixed(1)}★`, label: "Google Rating"  },
-  { value: `${BUSINESS.reviewCount}+`,       label: "Happy Customers" },
+  { value: `${BUSINESS.happyCustomers}+`,    label: "Happy Customers" },
   { value: "$0",                              label: "Hidden Fees"     },
 ];
 
