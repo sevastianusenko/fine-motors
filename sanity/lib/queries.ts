@@ -8,6 +8,15 @@ export const FEATURED_QUERY = groq`
   }
 `;
 
+// Hero collage — every car with a photo (available, pending AND sold: the wall is the whole lot's history)
+export const HERO_TILES_QUERY = groq`
+  *[_type == "vehicle" && defined(mainImage.asset) && (status == "available" || status == "pending" || status == "sold")] | order(_createdAt desc) [0...40] {
+    _id, year, make, model,
+    "img": mainImage.asset->url,
+    "img2": gallery[0].asset->url,
+  }
+`;
+
 // Full inventory list (available + sold, not deleted/draft)
 export const VEHICLES_QUERY = groq`
   *[_type == "vehicle" && (status == "available" || status == "pending" || status == "sold")] | order(_createdAt desc) {

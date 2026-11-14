@@ -1,6 +1,7 @@
 import { client } from "@/sanity/lib/client";
-import { FEATURED_QUERY } from "@/sanity/lib/queries";
+import { FEATURED_QUERY, HERO_TILES_QUERY } from "@/sanity/lib/queries";
 import { HomeClient, type FeaturedVehicle } from "./HomeClient";
+import { FALLBACK_HERO_TILES, MIN_REAL_TILES, type HeroTile } from "./hero-tiles";
 
 // Static fallback when Sanity not configured
 const STATIC: FeaturedVehicle[] = [
@@ -12,8 +13,28 @@ const STATIC: FeaturedVehicle[] = [
 
 export default async function HomePage() {
   let featured: FeaturedVehicle[] = STATIC;
+  let heroTiles: HeroTile[] = FALLBACK_HERO_TILES;
 
   if (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+    // Hero collage: main photo of every car, then second angles — so a short
+    // inventory still fills the wall before we pad it with stock photos.
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const raw: any[] = await client.fetch(HERO_TILES_QUERY, {}, { next: { revalidate: 300 } });
+      if (Array.isArray(raw)) {
+        const label = (v: { year?: number; make?: string; model?: string }) =>
+          [v.year, v.make, v.model].filter(Boolean).join(" ") || undefined;
+        const mains  = raw.filter(v => v.img).map(v => ({ src: v.img as string, label: label(v) }));
+        const angles = raw.filter(v => v.img2).map(v => ({ src: v.img2 as string, label: label(v) }));
+        const real   = [...mains, ...angles];
+        if (real.length > 0) {
+          heroTiles = real.length >= MIN_REAL_TILES ? real : [...real, ...FALLBACK_HERO_TILES];
+        }
+      }
+    } catch (e) {
+      console.error("[Home] Sanity hero tiles fetch failed:", e);
+    }
+
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const raw: any[] = await client.fetch(FEATURED_QUERY, {}, { next: { revalidate: 60 } });
@@ -30,6 +51,7 @@ export default async function HomePage() {
           kbbValue: v.kbbValue ?? undefined,
           fuel:     v.fuel ?? undefined,
           brandNew: v.brandNew ?? false,
+          slug:     v.slug ?? undefined,
         }));
       }
     } catch (e) {
@@ -37,6 +59,5 @@ export default async function HomePage() {
     }
   }
 
-  return <HomeClient featuredVehicles={featured} />;
+  return <HomeClient featuredVehicles={featured} heroTiles={heroTiles} />;
 }
-          slug:     v.slug ?? undefined,

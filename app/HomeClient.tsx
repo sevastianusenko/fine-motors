@@ -7,6 +7,8 @@ import {
   CheckCircle, MapPin, Mail, Clock, Leaf,
 } from "lucide-react";
 import { NavBar } from "./components/NavBar";
+import { HeroCollage } from "./components/HeroCollage";
+import type { HeroTile } from "./hero-tiles";
 import { Footer } from "@/app/components/Footer";
 import Link from "next/link";
 
@@ -24,9 +26,9 @@ export type FeaturedVehicle = {
   kbbValue?: number;
   fuel?: string;
   brandNew?: boolean;
+  slug?: string;
 };
 
-  slug?: string;
 // ── CONSTANTS ─────────────────────────────────────────────────────────────
 
 const BUSINESS = {
@@ -95,7 +97,7 @@ function FadeUp({ children, className = "", delay = 0 }: { children: React.React
 
 // ── COMPONENT ─────────────────────────────────────────────────────────────
 
-export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVehicle[] }) {
+export function HomeClient({ featuredVehicles, heroTiles }: { featuredVehicles: FeaturedVehicle[]; heroTiles: HeroTile[] }) {
   const [searchMake, setSearchMake]   = useState("");
   const [searchPrice, setSearchPrice] = useState("");
 
@@ -120,7 +122,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
       <NavBar />
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#04060f]">
+      <section className="relative min-h-[calc(100svh-4rem)] flex items-center overflow-hidden bg-[#04060f]">
 
         <style>{`
           @keyframes hero-shimmer {
@@ -141,62 +143,8 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
           }
         `}</style>
 
-        {/* Ken Burns — slow continuous zoom-in */}
-        <motion.div className="absolute inset-0"
-          initial={{ scale: 1.0 }}
-          animate={{ scale: 1.10 }}
-          transition={{ duration: 20, ease: "linear", repeat: Infinity, repeatType: "mirror" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80" alt=""
-            className="w-full h-full object-cover object-center opacity-[0.30]" loading="eager" />
-        </motion.div>
-
-        {/* Directional gradient — dark left, opens toward image right */}
-        <div className="absolute inset-0" style={{
-          background:"linear-gradient(to right,rgba(4,6,15,0.98) 0%,rgba(4,6,15,0.85) 42%,rgba(4,6,15,0.40) 100%)"
-        }} />
-        {/* Bottom vignette */}
-        <div className="absolute inset-0" style={{
-          background:"linear-gradient(to top,rgba(4,6,15,1) 0%,transparent 32%)"
-        }} />
-
-        {/* Subtle grid */}
-        <div className="absolute inset-0 opacity-[0.018]"
-          style={{ backgroundImage:"linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)", backgroundSize:"80px 80px" }} />
-
-        {/* Orb — large orange, top-left */}
-        <motion.div className="absolute pointer-events-none"
-          style={{ top:"-12%", left:"-8%", width:1000, height:1000, borderRadius:"50%",
-            background:"radial-gradient(circle,rgba(249,115,22,.10) 0%,transparent 58%)" }}
-          animate={{ y:[-40,40,-40], x:[-20,20,-20] }}
-          transition={{ duration:11, repeat:Infinity, ease:"easeInOut" }}
-        />
-        {/* Orb — indigo, bottom-right */}
-        <motion.div className="absolute pointer-events-none"
-          style={{ bottom:"-15%", right:"-5%", width:700, height:700, borderRadius:"50%",
-            background:"radial-gradient(circle,rgba(99,102,241,.08) 0%,transparent 58%)" }}
-          animate={{ y:[35,-35,35], x:[20,-20,20] }}
-          transition={{ duration:13, repeat:Infinity, ease:"easeInOut", delay:2 }}
-        />
-        {/* Orb — gold accent, mid-right */}
-        <motion.div className="absolute pointer-events-none"
-          style={{ top:"28%", right:"10%", width:380, height:380, borderRadius:"50%",
-            background:"radial-gradient(circle,rgba(251,191,36,.05) 0%,transparent 65%)" }}
-          animate={{ y:[-22,22,-22] }}
-          transition={{ duration:8, repeat:Infinity, ease:"easeInOut", delay:1 }}
-        />
-
-        {/* Diagonal light sweep */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <motion.div
-            style={{ position:"absolute", inset:0,
-              background:"linear-gradient(105deg,transparent 37%,rgba(255,255,255,.032) 50%,transparent 63%)" }}
-            initial={{ x:"-100%" }}
-            animate={{ x:"200%" }}
-            transition={{ duration:4, repeat:Infinity, repeatDelay:9, ease:"easeInOut", delay:2.5 }}
-          />
-        </div>
+        {/* The lot: tilted, drifting wall of inventory photos, kept dark, lit by a wandering lamp */}
+        <HeroCollage tiles={heroTiles} />
 
         {/* Vertical side accent — luxury editorial detail */}
         <motion.div className="absolute left-5 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-3"
@@ -213,12 +161,12 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
         </motion.div>
 
         {/* ── Main content ───────────────────────── */}
-        <div className="relative mx-auto max-w-7xl px-8 lg:px-16 py-36 w-full">
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-16 pt-14 pb-28 sm:pt-20 sm:pb-32 w-full">
           <div className="max-w-3xl">
 
             {/* Badge */}
             <motion.div
-              className="inline-flex items-center gap-2.5 mb-9 px-4 py-2 rounded-full border border-white/[0.07] bg-white/[0.03] backdrop-blur-sm text-[11px] text-white/35 tracking-wide"
+              className="inline-flex items-center gap-2.5 mb-7 px-4 py-2 rounded-full border border-white/[0.07] bg-white/[0.03] backdrop-blur-sm text-[11px] text-white/35 tracking-wide"
               initial={{ opacity:0, y:14 }}
               animate={{ opacity:1, y:0 }}
               transition={{ duration:0.6, ease:[0.16,1,0.3,1] }}
@@ -253,7 +201,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
             <h1 className="mb-7 tracking-tight">
               <div className="overflow-hidden">
                 <motion.div
-                  className="text-5xl sm:text-6xl lg:text-[5.8rem] font-bold text-white leading-[1.04]"
+                  className="font-display text-[3.6rem] sm:text-7xl lg:text-[clamp(4.5rem,10.5vh,6.75rem)] font-extrabold text-white leading-[0.98] tracking-[-0.01em]"
                   initial={{ y:"108%" }}
                   animate={{ y:"0%" }}
                   transition={{ duration:0.82, delay:0.28, ease:[0.16,1,0.3,1] }}
@@ -263,7 +211,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
               </div>
               <div className="overflow-hidden">
                 <motion.div
-                  className="text-5xl sm:text-6xl lg:text-[5.8rem] font-bold leading-[1.04]"
+                  className="font-display text-[3.6rem] sm:text-7xl lg:text-[clamp(4.5rem,10.5vh,6.75rem)] font-extrabold leading-[0.98] tracking-[-0.01em]"
                   initial={{ y:"108%" }}
                   animate={{ y:"0%" }}
                   transition={{ duration:0.82, delay:0.38, ease:[0.16,1,0.3,1] }}
@@ -274,7 +222,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
               </div>
               <div className="overflow-hidden">
                 <motion.div
-                  className="text-5xl sm:text-6xl lg:text-[5.8rem] font-bold text-white/60 leading-[1.04]"
+                  className="font-display text-[3.6rem] sm:text-7xl lg:text-[clamp(4.5rem,10.5vh,6.75rem)] font-extrabold text-white/55 leading-[0.98] tracking-[-0.01em]"
                   initial={{ y:"108%" }}
                   animate={{ y:"0%" }}
                   transition={{ duration:0.82, delay:0.48, ease:[0.16,1,0.3,1] }}
@@ -285,7 +233,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
             </h1>
 
             {/* Subtitle */}
-            <motion.p className="text-sm sm:text-base text-white/28 max-w-xs mb-10 leading-relaxed"
+            <motion.p className="text-sm sm:text-base text-white/32 max-w-xs mb-8 leading-relaxed"
               initial={{ opacity:0, y:12 }}
               animate={{ opacity:1, y:0 }}
               transition={{ duration:0.7, delay:0.60, ease:[0.16,1,0.3,1] }}
@@ -295,7 +243,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
 
             {/* Search bar */}
             <motion.div
-              className="flex flex-col sm:flex-row gap-1.5 p-1.5 rounded-2xl bg-white/[0.05] backdrop-blur border border-white/[0.08] max-w-2xl mb-10"
+              className="flex flex-col sm:flex-row gap-1.5 p-1.5 rounded-2xl bg-white/[0.05] backdrop-blur border border-white/[0.08] max-w-2xl mb-8"
               initial={{ opacity:0, y:16 }}
               animate={{ opacity:1, y:0 }}
               transition={{ duration:0.7, delay:0.70, ease:[0.16,1,0.3,1] }}
