@@ -176,6 +176,24 @@ export const vehicleType = defineType({
     }),
 
     defineField({
+      name:        "slug",
+      title:       "Web Address (URL)",
+      type:        "slug",
+      description: "Click Generate to build it from Year + Make + Model — this is what buyers see in the browser: /inventory/2019-toyota-rav4-xle-awd",
+      options: {
+        source:    (doc) => [doc.year, doc.make, doc.model].filter(Boolean).join(" "),
+        maxLength: 96,
+        slugify:   (input) =>
+          input.toLowerCase().trim()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .slice(0, 96),
+      },
+      validation: (R) => R.required().error("Click Generate to create the web address"),
+      group:      "listing",
+    }),
+
+    defineField({
       name:        "price",
       title:       "Asking Price (USD)",
       type:        "number",

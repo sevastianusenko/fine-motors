@@ -26,6 +26,7 @@ export type FeaturedVehicle = {
   brandNew?: boolean;
 };
 
+  slug?: string;
 // ── CONSTANTS ─────────────────────────────────────────────────────────────
 
 const BUSINESS = {
@@ -418,7 +419,7 @@ export function HomeClient({ featuredVehicles }: { featuredVehicles: FeaturedVeh
                 transition={{delay:i*0.1,duration:0.55,ease:[0.22,1,0.36,1]}}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
-                <Link href={`/inventory/${car._id}`} className="block">
+                <Link href={`/inventory/${car.slug || car._id}`} className="block">
                   <div className="relative h-48 overflow-hidden bg-gray-900">
                     {car.img ? (
                       // eslint-disable-next-line @next/next/no-img-element

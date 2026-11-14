@@ -521,7 +521,7 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <Link href={`/inventory/${car._id}`}
+                  <Link href={`/inventory/${car.slug || car._id}`}
                     className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <div className="relative h-40 overflow-hidden bg-gray-900">
                       {car.img ? (

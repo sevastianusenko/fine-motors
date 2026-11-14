@@ -28,6 +28,7 @@ export type Vehicle = {
   fuel?: string;
   brandNew?: boolean;
   createdAt?: string;
+  slug?: string;
 };
 
 // ── CONSTANTS ─────────────────────────────────────────────────────────────
@@ -69,6 +70,7 @@ const SORT_OPTIONS = [
 function fmt(n: number)      { return new Intl.NumberFormat("en-US").format(n); }
 function fmtPrice(n: number) { return "$" + fmt(n); }
 function isHybrid(fuel?: string) { return fuel === "Hybrid" || fuel === "Plug-in Hybrid"; }
+function hrefFor(car: Vehicle)   { return `/inventory/${car.slug || car.id}`; }
 
 // ── CARD TAGS ─────────────────────────────────────────────────────────────
 // Stacked in the photo's top-left corner: Brand New, manual badge, Hybrid.
@@ -367,7 +369,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                   >
                     {car.status === "pending" ? (
                       /* ── PENDING CARD ──────────────────────────── */
-                      <Link href={`/inventory/${car.id}`} className="block">
+                      <Link href={hrefFor(car)} className="block">
                         <div className="relative h-48 overflow-hidden bg-gray-900">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -417,7 +419,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                       </Link>
                     ) : car.status === "sold" ? (
                       /* ── SOLD CARD ─────────────────────────────── */
-                      <Link href={`/inventory/${car.id}`} className="block opacity-80 hover:opacity-100 transition-opacity">
+                      <Link href={hrefFor(car)} className="block opacity-80 hover:opacity-100 transition-opacity">
                         <div className="relative h-48 overflow-hidden bg-gray-900">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -454,7 +456,7 @@ export function InventoryClient({ vehicles }: { vehicles: Vehicle[] }) {
                     ) : (
                       /* ── AVAILABLE CARD ────────────────────────── */
                       <>
-                        <Link href={`/inventory/${car.id}`} className="block">
+                        <Link href={hrefFor(car)} className="block">
                           <div className="relative h-48 overflow-hidden bg-gray-900">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img

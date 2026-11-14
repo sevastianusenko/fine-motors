@@ -43,6 +43,14 @@ function titleCase(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 }
 
+// Same rule as the slug field in the vehicle schema
+function slugify(s: string) {
+  return s.toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 96);
+}
+
 // ── Custom Input Component ─────────────────────────────────────────────────
 
 export function VinDecoderInput(props: StringInputProps) {
@@ -54,6 +62,9 @@ export function VinDecoderInput(props: StringInputProps) {
   const docType = useFormValue(["_type"]) as string;
   const docId   = rawId?.replace(/^drafts\./, "") ?? "";
   const { patch } = useDocumentOperation(docId, docType);
+
+  // Existing web address is never overwritten — it may already be indexed by Google
+  const existingSlug = useFormValue(["slug", "current"]) as string | undefined;
 
   const vin = props.value ?? "";
 
@@ -106,6 +117,12 @@ export function VinDecoderInput(props: StringInputProps) {
       if (Object.keys(fields).length === 0) {
         setResult({ ok: false, msg: "VIN found but no data returned. Fill fields manually." });
         return;
+      }
+
+      // New cars get a readable web address for free
+      if (!existingSlug) {
+        const source = [fields.year, fields.make, fields.model].filter(Boolean).join(" ");
+        if (source) fields.slug = { _type: "slug", current: slugify(source) };
       }
 
       patch.execute([{ set: fields }]);

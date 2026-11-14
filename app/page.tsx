@@ -39,3 +39,4 @@ export default async function HomePage() {
 
   return <HomeClient featuredVehicles={featured} />;
 }
+          slug:     v.slug ?? undefined,

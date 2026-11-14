@@ -77,6 +77,7 @@ export default async function InventoryPage() {
           fuel:      v.fuel ?? undefined,
           brandNew:  v.brandNew ?? false,
           createdAt: v._createdAt ?? undefined,
+          slug:      v.slug ?? undefined,
         }));
       }
     } catch (err) {

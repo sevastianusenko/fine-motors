@@ -64,8 +64,9 @@ function buildPostText(v: Record<string, unknown>): string {
 
   text += `\n📞 Call or message us to schedule a test drive!`;
 
-  if (SITE_URL && v._id) {
-    text += `\n🌐 ${SITE_URL}/inventory/${v._id}`;
+  const slug = (v.slug as { current?: string } | undefined)?.current;
+  if (SITE_URL && (slug || v._id)) {
+    text += `\n🌐 ${SITE_URL}/inventory/${slug ?? v._id}`;
   }
 
   return text;
