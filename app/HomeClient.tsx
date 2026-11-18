@@ -35,7 +35,6 @@ const BUSINESS = {
   name: "Fine Motors LLC",
   yearsInBusiness: 15,
   rating: 5.0,
-  reviewCount: 25,
   happyCustomers: 100,
   address: { street: "3910 Stiegel Pike", city: "Newmanstown", state: "PA", zip: "17073" },
   phone: "(717) 644-5444",

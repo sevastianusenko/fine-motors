@@ -331,7 +331,7 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                 {[
                   { icon: Shield,       title: "No Hidden Fees",      desc: "The price you see is the price you pay. No surprises." },
                   { icon: CheckCircle,  title: "Personally Inspected", desc: "Igor inspects every vehicle before it goes on the lot." },
-                  { icon: Star,         title: "5.0★ on Google",       desc: "25+ verified reviews from real customers in Lebanon County." },
+                  { icon: Star,         title: "5.0★ on Google",       desc: "Real reviews from customers across Lebanon County." },
                 ].map(pt => (
                   <div key={pt.title} className="flex gap-3 p-4 rounded-2xl border border-gray-100 bg-white">
                     <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">

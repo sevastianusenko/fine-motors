@@ -27,7 +27,7 @@ const HOURS = [
 ];
 
 const TRUST_STATS = [
-  { icon: Star,       value: "5.0★",  label: "Google Rating",    sub: "25+ verified reviews"         },
+  { icon: Star,       value: "5.0★",  label: "Google Rating",    sub: "From real customers"          },
   { icon: BadgeCheck, value: "15+",   label: "Years in Business", sub: "Serving Lebanon County"       },
   { icon: Users,      value: "100+",  label: "Happy Customers",   sub: "And counting"                 },
   { icon: ShieldCheck,value: "$0",    label: "Hidden Fees",       sub: "Price you see = price you pay" },
@@ -313,11 +313,8 @@ export default function ContactPage() {
                     <Star key={i} className="w-6 h-6 fill-orange-400 text-orange-400" />
                   ))}
                 </div>
-                <p className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                <p className="text-2xl sm:text-3xl font-bold text-white mb-8">
                   5.0 out of 5 stars on Google
-                </p>
-                <p className="text-white/40 mb-8 text-sm">
-                  Based on 25+ verified customer reviews
                 </p>
                 <blockquote className="text-white/70 text-base sm:text-lg italic max-w-2xl mx-auto leading-relaxed mb-6">
                   &ldquo;No pressure, fair price, car was exactly as described. Drove from Harrisburg and would do it again.
