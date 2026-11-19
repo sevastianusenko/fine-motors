@@ -30,7 +30,7 @@ const TRUST_STATS = [
   { icon: Star,       value: "5.0★",  label: "Google Rating",    sub: "From real customers"          },
   { icon: BadgeCheck, value: "15+",   label: "Years in Business", sub: "Serving Lebanon County"       },
   { icon: Users,      value: "100+",  label: "Happy Customers",   sub: "And counting"                 },
-  { icon: ShieldCheck,value: "$0",    label: "Hidden Fees",       sub: "Price you see = price you pay" },
+  { icon: ShieldCheck,value: "90",    label: "Days Warranty",     sub: "Included with every vehicle"  },
 ];
 
 const TRUST_POINTS = [

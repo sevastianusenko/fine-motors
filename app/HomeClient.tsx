@@ -57,7 +57,7 @@ const STATS = [
 
 const FEATURES = [
   { icon: ShieldCheck, title: "Honest Pricing",    desc: "No hidden fees, no last-minute surprises. The price you see is the price you pay."  },
-  { icon: Car,         title: "Quality Vehicles",  desc: "Every car is hand-picked and personally inspected. We only sell what we'd drive ourselves." },
+  { icon: Car,         title: "Quality Vehicles",  desc: "Every car is hand-picked, personally inspected, and backed by our 90-day warranty. We only sell what we'd drive ourselves." },
   { icon: CheckCircle, title: "No-Pressure Sales", desc: "Take your time, ask every question. We're here to help you find the right car, not to rush you into anything." },
   { icon: Users,       title: "Family-Owned",      desc: `Igor and his family have been right here in Newmanstown for over ${BUSINESS.yearsInBusiness} years. You deal with the owner, not a salesperson.` },
 ];
@@ -277,7 +277,7 @@ export function HomeClient({ featuredVehicles, heroTiles }: { featuredVehicles: 
               animate={{ opacity:1 }}
               transition={{ duration:0.7, delay:0.80 }}
             >
-              {["No Hidden Fees","No-Pressure Sales","5.0★ Google","Family-Owned 15+ yrs"].map(t=>(
+              {["90-Day Warranty","No Hidden Fees","No-Pressure Sales","5.0★ Google"].map(t=>(
                 <span key={t} className="flex items-center gap-1.5">
                   <CheckCircle className="w-3.5 h-3.5 text-orange-400/55 shrink-0" />{t}
                 </span>
@@ -324,6 +324,59 @@ export function HomeClient({ featuredVehicles, heroTiles }: { featuredVehicles: 
               transition={{ duration:2.2, repeat:Infinity, ease:"easeInOut" }}
             />
           </div>
+        </div>
+      </section>
+
+      {/* ── 90-DAY WARRANTY BAND ──────────────────────────────────── */}
+      <section aria-labelledby="warranty-heading" className="relative overflow-hidden bg-orange-500 text-[#04060f]">
+        {/* Ghosted number in the background */}
+        <div aria-hidden="true" className="pointer-events-none absolute -right-6 -top-10 sm:-top-16 font-display font-extrabold leading-none text-[16rem] sm:text-[22rem] lg:text-[26rem] tracking-[-0.06em] text-[#04060f]/[0.07] select-none">
+          90
+        </div>
+        <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-16 py-9 sm:py-10 flex flex-col lg:flex-row lg:items-center gap-7 lg:gap-12">
+          <motion.h2
+            id="warranty-heading"
+            className="flex items-baseline gap-3 sm:gap-4 shrink-0 font-display font-extrabold uppercase leading-none"
+            initial={{ opacity:0, x:-24 }}
+            whileInView={{ opacity:1, x:0 }}
+            viewport={{ once:true, margin:"-60px" }}
+            transition={{ duration:0.6, ease:[0.16,1,0.3,1] }}
+          >
+            <span className="text-[5.5rem] sm:text-[7rem] lg:text-[8rem] tracking-[-0.03em] tabular-nums">90</span>
+            <span className="flex flex-col text-[2rem] sm:text-[2.6rem] lg:text-[3rem] leading-[0.88] tracking-[-0.01em]">
+              <span>Days</span>
+              <span>Warranty</span>
+            </span>
+          </motion.h2>
+
+          <motion.div
+            className="lg:border-l lg:border-[#04060f]/20 lg:pl-12 max-w-xl"
+            initial={{ opacity:0, y:14 }}
+            whileInView={{ opacity:1, y:0 }}
+            viewport={{ once:true, margin:"-60px" }}
+            transition={{ duration:0.6, delay:0.12, ease:[0.16,1,0.3,1] }}
+          >
+            <p className="text-lg sm:text-xl font-bold leading-snug">
+              Included with every vehicle on our lot.
+            </p>
+            <p className="mt-2 text-sm sm:text-[15px] text-[#04060f]/70 leading-relaxed">
+              Most small lots sell as-is. We stand behind what we sell, so you drive home with real peace of mind. Ask Igor for the coverage details.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="lg:ml-auto shrink-0"
+            initial={{ opacity:0, y:14 }}
+            whileInView={{ opacity:1, y:0 }}
+            viewport={{ once:true, margin:"-60px" }}
+            transition={{ duration:0.6, delay:0.2, ease:[0.16,1,0.3,1] }}
+          >
+            <a href={`tel:${BUSINESS.phoneHref}`}
+              className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl bg-[#04060f] text-white font-bold text-sm hover:bg-[#101528] active:scale-[0.97] transition-all whitespace-nowrap">
+              <Phone className="w-4 h-4 text-orange-400" />
+              Ask About Coverage
+            </a>
+          </motion.div>
         </div>
       </section>
 
@@ -558,6 +611,10 @@ export function HomeClient({ featuredVehicles, heroTiles }: { featuredVehicles: 
                 {
                   q: "Are there any hidden fees?",
                   a: "Nope. The price on the car is what you pay. No dealer fees, no documentation surprises, nothing added on at the end. What you see is what you get.",
+                },
+                {
+                  q: "Do your vehicles come with a warranty?",
+                  a: "Yes. Every vehicle we sell comes with a 90-day warranty, so you're not on your own the moment you drive off the lot. Ask Igor about the coverage details when you stop by or give us a call.",
                 },
                 {
                   q: "Do you take trade-ins?",

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Car, Phone, MapPin, ChevronLeft, CheckCircle,
-  Gauge, Calendar, LayoutGrid, Star, Shield,
+  Gauge, Calendar, LayoutGrid, Star, Shield, ShieldCheck,
   ChevronLeft as Prev, ChevronRight as Next, Mail,
   Fuel, Zap, Settings2, Palette, X as Close, Maximize2, Leaf,
 } from "lucide-react";
@@ -327,9 +327,10 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
             {/* Trust points */}
             <div>
               <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Fine Motors Promise</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
-                  { icon: Shield,       title: "No Hidden Fees",      desc: "The price you see is the price you pay. No surprises." },
+                  { icon: ShieldCheck,  title: "90-Day Warranty",      desc: "Included with every vehicle. Ask Igor for the coverage details." },
+                  { icon: Shield,       title: "No Hidden Fees",       desc: "The price you see is the price you pay. No surprises." },
                   { icon: CheckCircle,  title: "Personally Inspected", desc: "Igor inspects every vehicle before it goes on the lot." },
                   { icon: Star,         title: "5.0★ on Google",       desc: "Real reviews from customers across Lebanon County." },
                 ].map(pt => (
@@ -378,6 +379,13 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                         <div>
                           <p className="text-amber-800 font-bold text-sm">Sale Pending</p>
                           <p className="text-amber-700 text-xs mt-0.5 leading-relaxed">Someone is already working on buying this car. Call us — it may still be available.</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-orange-50 border border-orange-200">
+                        <ShieldCheck className="w-5 h-5 text-orange-500 shrink-0" />
+                        <div className="leading-tight">
+                          <p className="font-display font-extrabold uppercase text-orange-600 text-lg tracking-wide">90-Day Warranty</p>
+                          <p className="text-[11px] text-orange-700/70 font-medium">Included with this vehicle</p>
                         </div>
                       </div>
                       <a href={`tel:${PHONE_TEL}`}
@@ -443,6 +451,13 @@ export function VehicleDetail({ vehicle, more = [] }: { vehicle: any; more?: any
                       </div>
                     </div>
                     <div className="p-5 space-y-3">
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-orange-50 border border-orange-200">
+                        <ShieldCheck className="w-5 h-5 text-orange-500 shrink-0" />
+                        <div className="leading-tight">
+                          <p className="font-display font-extrabold uppercase text-orange-600 text-lg tracking-wide">90-Day Warranty</p>
+                          <p className="text-[11px] text-orange-700/70 font-medium">Included with this vehicle</p>
+                        </div>
+                      </div>
                       <a href={`tel:${PHONE_TEL}`}
                         className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors">
                         <Phone className="w-4.5 h-4.5" />
