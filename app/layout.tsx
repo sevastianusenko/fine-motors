@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Barlow_Condensed } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { PromoPopup } from "./components/PromoPopup";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -121,7 +122,10 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        {children}
+        <PromoPopup />
+      </body>
       <Script src="https://www.googletagmanager.com/gtag/js?id=G-4QD7EM6XML" strategy="afterInteractive" />
       <Script id="gtag-init" strategy="afterInteractive">{`
         window.dataLayer = window.dataLayer || [];
